@@ -30,7 +30,7 @@ h2:
 server:
   port: 8081
 jwt:
-  secret-key: JSON_WEB_TOKEN_SECRET_KEY_FOR_LOCAL_PROFILE
+  secret-key: ${JWT_TOKEN_SECRET_KEY_LOCAL}
 
 logging:
   level:
