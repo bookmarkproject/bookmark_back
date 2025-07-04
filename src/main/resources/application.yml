@@ -21,16 +21,21 @@ h2:
     url: jdbc:h2:mem:bookmark
     username: sa
   jpa:
+    show_sql: true
     properties:
       hibernate:
         ddl-auto: create-drop
         format_sql: true
-        show_sql: true
         dialect: org.hibernate.dialect.H2Dialect
 server:
   port: 8081
 jwt:
   secret-key: JSON_WEB_TOKEN_SECRET_KEY_FOR_LOCAL_PROFILE
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
 ---
 ###dev
 spring:
