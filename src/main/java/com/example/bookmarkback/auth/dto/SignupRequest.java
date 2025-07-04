@@ -21,7 +21,7 @@ public record SignupRequest(
         LocalDate birthday,
         String profileImage
 ) {
-    public Member toMember() {
-        return new Member(email, password, name, nickname, gender, phoneNumber, birthday, profileImage);
+    public Member toMember(String encodedPassword) {
+        return new Member(email, encodedPassword, name, nickname, gender, phoneNumber, birthday, profileImage);
     }
 }

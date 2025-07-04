@@ -5,24 +5,24 @@ import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
-
-    public AuthService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public MemberResponse signup(SignupRequest signupRequest) throws Exception {
         log.info("회원가입 시작");
 
-        Member member = signupRequest.toMember();
+        Member member = signupRequest.toMember(encodePassword(signupRequest.password()));
         checkDuplicationEmail(member.getEmail());
         checkDuplicationNickname(member.getNickname());
 
@@ -34,6 +34,10 @@ public class AuthService {
             log.error("서버 예외 발생");
             throw new Exception(e);
         }
+    }
+
+    private String encodePassword(String password) {
+        return passwordEncoder.encode(password);
     }
 
     private void checkDuplicationEmail(String email) {
