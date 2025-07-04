@@ -15,6 +15,19 @@ import lombok.Getter;
 @Entity
 @Getter
 public class Member extends BaseEntity {
+    public Member(String email, String password, String name, String nickname, String gender,
+                  String phoneNumber,
+                  LocalDate birthday, String profileImage) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.gender = Gender.toEnum(gender);
+        this.role = Role.NORMAL;
+        this.phoneNumber = phoneNumber;
+        this.birthday = birthday;
+        this.profileImage = profileImage;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_gen")
