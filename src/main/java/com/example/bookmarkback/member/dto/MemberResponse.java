@@ -1,7 +1,6 @@
-package com.example.bookmarkback.auth.dto;
+package com.example.bookmarkback.member.dto;
 
-import com.example.bookmarkback.auth.entity.Member;
-import jakarta.validation.constraints.NotBlank;
+import com.example.bookmarkback.member.entity.Member;
 import java.time.LocalDate;
 import lombok.Builder;
 

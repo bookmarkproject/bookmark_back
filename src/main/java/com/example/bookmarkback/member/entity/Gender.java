@@ -1,4 +1,4 @@
-package com.example.bookmarkback.auth.entity;
+package com.example.bookmarkback.member.entity;
 
 import com.example.bookmarkback.global.exception.BadRequestException;
 import java.util.Arrays;
