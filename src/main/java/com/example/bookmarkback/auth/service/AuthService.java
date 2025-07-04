@@ -29,6 +29,7 @@ public class AuthService {
         try {
             Member savedMember = memberRepository.save(member);
             log.info("회원가입 성공 회원 아이디 : {}", savedMember.getId());
+            log.info("회원가입 성공 비밀번호 : {}", savedMember.getPassword());
             return MemberResponse.response(savedMember);
         } catch (Exception e) {
             log.error("서버 예외 발생");

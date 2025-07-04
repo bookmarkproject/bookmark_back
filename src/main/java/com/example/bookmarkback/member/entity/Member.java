@@ -42,7 +42,7 @@ public class Member extends BaseEntity {
     @Column(unique = true, updatable = false, nullable = false)
     private String email;
 
-    @Column(length = 16, nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
@@ -59,7 +59,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(length = 16, name = "phone_number", nullable = false)
     private String phoneNumber;
 
     @Column(nullable = false)
