@@ -2,7 +2,9 @@ package com.example.bookmarkback.auth.entity;
 
 import com.example.bookmarkback.global.exception.BadRequestException;
 import java.util.Arrays;
+import lombok.Getter;
 
+@Getter
 public enum Gender {
     MALE("남자"),
     FEMALE("여자");
@@ -19,4 +21,5 @@ public enum Gender {
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException("해당 성별이 존재하지 않습니다."));
     }
+
 }

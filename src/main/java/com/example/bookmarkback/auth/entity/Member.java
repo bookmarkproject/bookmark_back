@@ -10,8 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import java.time.LocalDate;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Member extends BaseEntity {
 
     @Id

@@ -2,7 +2,9 @@ package com.example.bookmarkback.auth.entity;
 
 import com.example.bookmarkback.global.exception.BadRequestException;
 import java.util.Arrays;
+import lombok.Getter;
 
+@Getter
 public enum Role {
     ADMIN("관리자"),
     NORMAL("유저");
