@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.entity;
 
+import com.example.bookmarkback.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +10,14 @@ import jakarta.persistence.SequenceGenerator;
 import java.time.LocalDateTime;
 
 @Entity
-public class EmailVerification {
+public class EmailVerification extends BaseEntity {
+
+    public EmailVerification(String email, String code, boolean isVerified, LocalDateTime expiredAt) {
+        this.email = email;
+        this.code = code;
+        this.isVerified = isVerified;
+        this.expiredAt = expiredAt;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_gen")
