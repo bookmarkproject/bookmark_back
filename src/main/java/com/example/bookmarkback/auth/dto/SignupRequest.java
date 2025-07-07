@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.dto;
 
+import com.example.bookmarkback.auth.validator.SignupValidator;
 import com.example.bookmarkback.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,11 @@ public record SignupRequest(
         LocalDate birthday,
         String profileImage
 ) {
+
+    public SignupRequest {
+        SignupValidator.isValidPassword(password);
+    }
+
     public Member toMember(String encodedPassword) {
         return new Member(email, encodedPassword, name, nickname, gender, phoneNumber, birthday, profileImage);
     }

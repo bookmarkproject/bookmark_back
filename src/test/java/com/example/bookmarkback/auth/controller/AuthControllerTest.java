@@ -2,14 +2,17 @@ package com.example.bookmarkback.auth.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.service.AuthService;
+import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +66,7 @@ class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_PROBLEM_JSON)
                 )
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
                 .andExpect(status().isCreated());
     }
 
@@ -89,20 +92,39 @@ class AuthControllerTest {
     @Test
     @DisplayName("회원가입시 비밀번호는 필수 값이다.")
     void notContainPassword() throws Exception {
-        SignupRequest request = SignupRequest.builder()
-                .email("kkk@gmail.com")
-                .password("")
-                .name("김철수")
-                .nickname("포포뇽")
-                .gender("남자")
-                .phoneNumber("01012345678")
-                .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
-                .build();
 
-        requestSignup(request)
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("비밀번호는 필수 항목입니다."));
+        Assertions.assertThatThrownBy(() ->
+                        SignupRequest.builder()
+                                .email("kkk@gmail.com")
+                                .password("")
+                                .name("김철수")
+                                .nickname("포포뇽")
+                                .gender("남자")
+                                .phoneNumber("01012345678")
+                                .birthday(LocalDate.of(1900, 12, 21))
+                                .profileImage(null)
+                                .build())
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("비밀번호는 필수 항목입니다.");
+        ;
+    }
+
+    @Test
+    @DisplayName("회원가입시 비밀번호는 8~16자 사이의 길이를 가져야 한다.")
+    void passwordLengthTest() throws Exception {
+        Assertions.assertThatThrownBy(() ->
+                        SignupRequest.builder()
+                                .email("kkk@gmail.com")
+                                .password("asdsad2")
+                                .name("김철수")
+                                .nickname("포포뇽")
+                                .gender("남자")
+                                .phoneNumber("01012345678")
+                                .birthday(LocalDate.of(1900, 12, 21))
+                                .profileImage(null)
+                                .build())
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("비밀번호는 8자 이상 16자 이하여야 합니다.");
     }
 
     @Test
@@ -110,7 +132,7 @@ class AuthControllerTest {
     void notContainName() throws Exception {
         SignupRequest request = SignupRequest.builder()
                 .email("kkk@gmail.com")
-                .password("sgsg")
+                .password("sgsdsfdfg")
                 .name("")
                 .nickname("포포뇽")
                 .gender("남자")
@@ -129,7 +151,7 @@ class AuthControllerTest {
     void notContainNickname() throws Exception {
         SignupRequest request = SignupRequest.builder()
                 .email("kkk@gmail.com")
-                .password("dsfasf")
+                .password("dsfassfgdf")
                 .name("김철수")
                 .nickname("")
                 .gender("남자")
@@ -148,7 +170,7 @@ class AuthControllerTest {
     void notContainGender() throws Exception {
         SignupRequest request = SignupRequest.builder()
                 .email("kkk@gmail.com")
-                .password("dsfasf")
+                .password("dsfadsfsf")
                 .name("김철수")
                 .nickname("포포뇽")
                 .gender("")
@@ -167,7 +189,7 @@ class AuthControllerTest {
     void notContainPhoneNumber() throws Exception {
         SignupRequest request = SignupRequest.builder()
                 .email("kkk@gmail.com")
-                .password("dsfasf")
+                .password("dsfasdasf")
                 .name("김철수")
                 .nickname("포포뇽")
                 .gender("남자")
@@ -186,7 +208,7 @@ class AuthControllerTest {
     void notContainBirthday() throws Exception {
         SignupRequest request = SignupRequest.builder()
                 .email("kkk@gmail.com")
-                .password("dsfasf")
+                .password("dsfasfdfd")
                 .name("김철수")
                 .nickname("포포뇽")
                 .gender("남자")
