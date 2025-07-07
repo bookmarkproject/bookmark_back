@@ -1,6 +1,7 @@
 package com.example.bookmarkback.auth.validator;
 
 import com.example.bookmarkback.global.exception.BadRequestException;
+import com.example.bookmarkback.member.entity.Gender;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +35,14 @@ public class SignupValidator {
         if (!phoneNumber.matches(regex)) {
             throw new BadRequestException("유효하지 않은 휴대폰 번호입니다.");
         }
-        ;
+
+    }
+
+    public static void isValidGender(String gender) {
+        if (gender == null || gender.isBlank()) {
+            throw new BadRequestException("성별은 필수 항목입니다.");
+        }
+        Gender.toEnum(gender);
     }
 
     private static boolean isValidPasswordAllowedChar(String password) {
