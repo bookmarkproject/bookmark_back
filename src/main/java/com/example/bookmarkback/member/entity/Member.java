@@ -59,7 +59,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(length = 16, name = "phone_number", nullable = false)
+    @Column(length = 11, name = "phone_number", nullable = false)
     private String phoneNumber;
 
     @Column(nullable = false)

@@ -16,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.assertj.MockMvcTester.MockMvcRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -79,19 +81,135 @@ class AuthControllerTest {
                 .profileImage(null)
                 .build();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/signup")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                )
-                .andDo(MockMvcResultHandlers.print())
+        requestSignup(request)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("이메일은 필수 항목입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입시 비밀번호는 필수 값이다.")
+    void notContainPassword() throws Exception {
+        SignupRequest request = SignupRequest.builder()
+                .email("kkk@gmail.com")
+                .password("")
+                .name("김철수")
+                .nickname("포포뇽")
+                .gender("남자")
+                .phoneNumber("01012345678")
+                .birthday(LocalDate.of(1900, 12, 21))
+                .profileImage(null)
+                .build();
+
+        requestSignup(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("비밀번호는 필수 항목입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입시 이름은 필수값이다.")
+    void notContainName() throws Exception {
+        SignupRequest request = SignupRequest.builder()
+                .email("kkk@gmail.com")
+                .password("sgsg")
+                .name("")
+                .nickname("포포뇽")
+                .gender("남자")
+                .phoneNumber("01012345678")
+                .birthday(LocalDate.of(1900, 12, 21))
+                .profileImage(null)
+                .build();
+
+        requestSignup(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("이름은 필수 항목입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입시 닉네임은 필수값이다.")
+    void notContainNickname() throws Exception {
+        SignupRequest request = SignupRequest.builder()
+                .email("kkk@gmail.com")
+                .password("dsfasf")
+                .name("김철수")
+                .nickname("")
+                .gender("남자")
+                .phoneNumber("01012345678")
+                .birthday(LocalDate.of(1900, 12, 21))
+                .profileImage(null)
+                .build();
+
+        requestSignup(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("닉네임은 필수 항목입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입시 성별은 필수값이다.")
+    void notContainGender() throws Exception {
+        SignupRequest request = SignupRequest.builder()
+                .email("kkk@gmail.com")
+                .password("dsfasf")
+                .name("김철수")
+                .nickname("포포뇽")
+                .gender("")
+                .phoneNumber("01012345678")
+                .birthday(LocalDate.of(1900, 12, 21))
+                .profileImage(null)
+                .build();
+
+        requestSignup(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("성별은 필수 항목입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입시 휴대폰 번호는 필수값이다.")
+    void notContainPhoneNumber() throws Exception {
+        SignupRequest request = SignupRequest.builder()
+                .email("kkk@gmail.com")
+                .password("dsfasf")
+                .name("김철수")
+                .nickname("포포뇽")
+                .gender("남자")
+                .phoneNumber("")
+                .birthday(LocalDate.of(1900, 12, 21))
+                .profileImage(null)
+                .build();
+
+        requestSignup(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("전화번호는 필수 항목입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입시 생년월일은 필수값이다.")
+    void notContainBirthday() throws Exception {
+        SignupRequest request = SignupRequest.builder()
+                .email("kkk@gmail.com")
+                .password("dsfasf")
+                .name("김철수")
+                .nickname("포포뇽")
+                .gender("남자")
+                .phoneNumber("01012345678")
+                .birthday(null)
+                .profileImage(null)
+                .build();
+
+        requestSignup(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("생년월일은 필수 항목입니다."));
+    }
+
+    private ResultActions requestSignup(SignupRequest request) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders.post("/auth/signup")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+        );
     }
 
     private Member getTestMember() {
         return new Member("kkk@gmail.com", "testpassword", "김철수", "포포뇽", "남자", "01012345678",
                 LocalDate.of(1900, 12, 21), null);
     }
-
 
 }
