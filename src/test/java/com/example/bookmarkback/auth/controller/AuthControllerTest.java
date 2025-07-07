@@ -192,6 +192,25 @@ class AuthControllerTest {
                 .hasMessage("비밀번호는 특수문자!@#$%^&*() 중 최소 1개 이상을 포함해야 합니다.");
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"asda2@35-35k", "dsf325 sadk", "af124!@41+_"})
+    @DisplayName("비밀번호에 허용되지 않는 문자가 있으면 예외 발생")
+    void containNotAllowedChar(String password) throws Exception {
+        Assertions.assertThatThrownBy(() ->
+                        SignupRequest.builder()
+                                .email("kkk@gmail.com")
+                                .password(password)
+                                .name("김철수")
+                                .nickname("포포뇽")
+                                .gender("남자")
+                                .phoneNumber("01012345678")
+                                .birthday(LocalDate.of(1900, 12, 21))
+                                .profileImage(null)
+                                .build())
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("허용되지 않는 문자가 포함되어 있습니다.");
+    }
+
     @Test
     @DisplayName("회원가입시 이름은 필수값이다.")
     void notContainName() throws Exception {
