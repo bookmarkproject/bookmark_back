@@ -59,7 +59,6 @@ class AuthControllerTest {
                 .gender("남자")
                 .phoneNumber("01012345678")
                 .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
                 .build();
 
         //when, then
@@ -84,7 +83,6 @@ class AuthControllerTest {
                 .gender("남자")
                 .phoneNumber("01012345678")
                 .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
                 .build();
 
         requestSignup(request)
@@ -104,7 +102,6 @@ class AuthControllerTest {
                                 .gender("남자")
                                 .phoneNumber("01012345678")
                                 .birthday(LocalDate.of(1900, 12, 21))
-                                .profileImage(null)
                                 .build())
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("비밀번호는 필수 항목입니다.");
@@ -123,7 +120,6 @@ class AuthControllerTest {
                                 .gender("남자")
                                 .phoneNumber("01012345678")
                                 .birthday(LocalDate.of(1900, 12, 21))
-                                .profileImage(null)
                                 .build())
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("비밀번호는 8자 이상 16자 이하여야 합니다.");
@@ -141,7 +137,6 @@ class AuthControllerTest {
                 .gender("남자")
                 .phoneNumber("01012345678")
                 .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
                 .build();
 
         when(authService.signup(request)).thenReturn(MemberResponse.response(getTestMember()));
@@ -167,7 +162,6 @@ class AuthControllerTest {
                                 .gender("남자")
                                 .phoneNumber("01012345678")
                                 .birthday(LocalDate.of(1900, 12, 21))
-                                .profileImage(null)
                                 .build())
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("비밀번호는 영어와 숫자가 최소 1개 이상 포함 되어야 합니다.");
@@ -186,7 +180,6 @@ class AuthControllerTest {
                                 .gender("남자")
                                 .phoneNumber("01012345678")
                                 .birthday(LocalDate.of(1900, 12, 21))
-                                .profileImage(null)
                                 .build())
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("비밀번호는 특수문자!@#$%^&*() 중 최소 1개 이상을 포함해야 합니다.");
@@ -205,7 +198,6 @@ class AuthControllerTest {
                                 .gender("남자")
                                 .phoneNumber("01012345678")
                                 .birthday(LocalDate.of(1900, 12, 21))
-                                .profileImage(null)
                                 .build())
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("허용되지 않는 문자가 포함되어 있습니다.");
@@ -222,7 +214,6 @@ class AuthControllerTest {
                 .gender("남자")
                 .phoneNumber("01012345678")
                 .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
                 .build();
 
         requestSignup(request)
@@ -241,7 +232,6 @@ class AuthControllerTest {
                 .gender("남자")
                 .phoneNumber("01012345678")
                 .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
                 .build();
 
         requestSignup(request)
@@ -260,7 +250,6 @@ class AuthControllerTest {
                 .gender("")
                 .phoneNumber("01012345678")
                 .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
                 .build();
 
         requestSignup(request)
@@ -280,7 +269,6 @@ class AuthControllerTest {
                                 .gender("남자")
                                 .phoneNumber("")
                                 .birthday(LocalDate.of(1900, 12, 21))
-                                .profileImage(null)
                                 .build())
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("휴대폰 번호 값은 필수입니다.");
@@ -300,7 +288,6 @@ class AuthControllerTest {
                                 .gender("남자")
                                 .phoneNumber(phoneNumber)
                                 .birthday(LocalDate.of(1900, 12, 21))
-                                .profileImage(null)
                                 .build())
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("유효하지 않은 휴대폰 번호입니다.");
@@ -317,7 +304,6 @@ class AuthControllerTest {
                 .gender("남자")
                 .phoneNumber("01012345678")
                 .birthday(null)
-                .profileImage(null)
                 .build();
 
         requestSignup(request)

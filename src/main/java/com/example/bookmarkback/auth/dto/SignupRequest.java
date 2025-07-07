@@ -22,8 +22,7 @@ public record SignupRequest(
         @NotBlank(message = "전화번호는 필수 항목입니다.")
         String phoneNumber,
         @NotNull(message = "생년월일은 필수 항목입니다.")
-        LocalDate birthday,
-        String profileImage
+        LocalDate birthday
 ) {
 
     public SignupRequest {
@@ -32,6 +31,6 @@ public record SignupRequest(
     }
 
     public Member toMember(String encodedPassword) {
-        return new Member(email, encodedPassword, name, nickname, gender, phoneNumber, birthday, profileImage);
+        return new Member(email, encodedPassword, name, nickname, gender, phoneNumber, birthday, null);
     }
 }
