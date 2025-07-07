@@ -23,7 +23,7 @@ public class Member extends BaseEntity {
         this.name = name;
         this.nickname = nickname;
         this.gender = Gender.toEnum(gender);
-        this.role = Role.NORMAL;
+        this.role = Role.USER;
         this.phoneNumber = phoneNumber;
         this.birthday = birthday;
         this.profileImage = profileImage;
