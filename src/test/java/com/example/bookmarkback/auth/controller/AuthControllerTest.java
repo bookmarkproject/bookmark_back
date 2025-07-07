@@ -271,20 +271,39 @@ class AuthControllerTest {
     @Test
     @DisplayName("회원가입시 휴대폰 번호는 필수값이다.")
     void notContainPhoneNumber() throws Exception {
-        SignupRequest request = SignupRequest.builder()
-                .email("kkk@gmail.com")
-                .password("dsfas35#dasf")
-                .name("김철수")
-                .nickname("포포뇽")
-                .gender("남자")
-                .phoneNumber("")
-                .birthday(LocalDate.of(1900, 12, 21))
-                .profileImage(null)
-                .build();
+        Assertions.assertThatThrownBy(() ->
+                        SignupRequest.builder()
+                                .email("kkk@gmail.com")
+                                .password("dsfas35#dasf")
+                                .name("김철수")
+                                .nickname("포포뇽")
+                                .gender("남자")
+                                .phoneNumber("")
+                                .birthday(LocalDate.of(1900, 12, 21))
+                                .profileImage(null)
+                                .build())
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("휴대폰 번호 값은 필수입니다.");
 
-        requestSignup(request)
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("전화번호는 필수 항목입니다."));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"21312545343", "123456789", "132352343",})
+    @DisplayName("휴대폰 번호가 허용되지 않은 형식이면 예외 발생")
+    void phoneNumberContainNotAllowedChar(String phoneNumber) throws Exception {
+        Assertions.assertThatThrownBy(() ->
+                        SignupRequest.builder()
+                                .email("kkk@gmail.com")
+                                .password("dsgsdfg@!24k")
+                                .name("김철수")
+                                .nickname("포포뇽")
+                                .gender("남자")
+                                .phoneNumber(phoneNumber)
+                                .birthday(LocalDate.of(1900, 12, 21))
+                                .profileImage(null)
+                                .build())
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("유효하지 않은 휴대폰 번호입니다.");
     }
 
     @Test
