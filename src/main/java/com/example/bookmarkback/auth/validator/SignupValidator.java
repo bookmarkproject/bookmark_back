@@ -28,6 +28,9 @@ public class SignupValidator {
 
     public static void isValidPhoneNumber(String phoneNumber) {
         String regex = "^01[016789]\\d{7,8}$";
+        if (phoneNumber == null || phoneNumber.isBlank()) {
+            throw new BadRequestException("휴대폰 번호 값은 필수입니다.");
+        }
         if (!phoneNumber.matches(regex)) {
             throw new BadRequestException("유효하지 않은 휴대폰 번호입니다.");
         }

@@ -28,6 +28,7 @@ public record SignupRequest(
 
     public SignupRequest {
         SignupValidator.isValidPassword(password);
+        SignupValidator.isValidPhoneNumber(phoneNumber);
     }
 
     public Member toMember(String encodedPassword) {
