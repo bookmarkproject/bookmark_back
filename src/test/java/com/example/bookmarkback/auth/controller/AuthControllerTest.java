@@ -242,19 +242,36 @@ class AuthControllerTest {
     @Test
     @DisplayName("회원가입시 성별은 필수값이다.")
     void notContainGender() throws Exception {
-        SignupRequest request = SignupRequest.builder()
-                .email("kkk@gmail.com")
-                .password("dsfad@%34ssf")
-                .name("김철수")
-                .nickname("포포뇽")
-                .gender("")
-                .phoneNumber("01012345678")
-                .birthday(LocalDate.of(1900, 12, 21))
-                .build();
+        Assertions.assertThatThrownBy(() ->
+                        SignupRequest.builder()
+                                .email("kkk@gmail.com")
+                                .password("asgas@32k")
+                                .name("김철수")
+                                .nickname("포포뇽")
+                                .gender(null)
+                                .phoneNumber("01012345678")
+                                .birthday(LocalDate.of(1900, 12, 21))
+                                .build())
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("성별은 필수 항목입니다.");
 
-        requestSignup(request)
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("성별은 필수 항목입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입시 허용되지 않은 성별이 들어오면 예외가 발생한다.")
+    void notAllowedGender() throws Exception {
+        Assertions.assertThatThrownBy(() ->
+                        SignupRequest.builder()
+                                .email("kkk@gmail.com")
+                                .password("asgas@32k")
+                                .name("김철수")
+                                .nickname("포포뇽")
+                                .gender("남성")
+                                .phoneNumber("01012345678")
+                                .birthday(LocalDate.of(1900, 12, 21))
+                                .build())
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("해당 성별이 존재하지 않습니다.");
     }
 
     @Test
