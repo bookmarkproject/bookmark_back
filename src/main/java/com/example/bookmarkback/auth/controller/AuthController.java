@@ -29,16 +29,4 @@ public class AuthController {
         return ResponseEntity.created(URI.create("/member/" + memberResponse.id()))
                 .body(memberResponse);
     }
-
-    @PostMapping("/mailsend")
-    public ResponseEntity<EmailResponse> mailSend(@RequestBody @Valid EmailRequest emailDRequest) {
-        EmailResponse emailResponse = authService.mailSend(emailDRequest);
-        return ResponseEntity.ok(emailResponse);
-    }
-
-    @PostMapping("/check")
-    public ResponseEntity<EmailResponse> authNumCheck(@RequestBody @Valid EmailRequest emailRequest) {
-        EmailResponse emailResponse = authService.authNumCheck(emailRequest);
-        return ResponseEntity.ok(emailResponse);
-    }
 }
