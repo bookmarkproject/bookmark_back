@@ -3,6 +3,15 @@ application:
 
 spring:
   config:
+    import: file:.env[.properties]
+
+host:
+  email: ${NAVER_ID}
+  password: ${NAVER_PASSWORD}
+
+---
+spring:
+  config:
     activate:
       on-profile: test
   h2:
