@@ -29,6 +29,9 @@ public class Member extends BaseEntity {
         this.profileImage = profileImage;
     }
 
+    public Member() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_gen")
     @SequenceGenerator(
