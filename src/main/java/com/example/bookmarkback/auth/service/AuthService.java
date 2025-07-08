@@ -49,14 +49,36 @@ public class AuthService {
         checkDuplicationEmail(member.getEmail());
         checkDuplicationNickname(member.getNickname());
 
+        checkEmailVerification(member.getEmail());
+
         try {
             Member savedMember = memberRepository.save(member);
             log.info("회원가입 성공 회원 id : {}", savedMember.getId());
             log.info("회원가입 성공 비밀번호 : {}", savedMember.getPassword());
+            deleteEmailVerification(savedMember.getEmail());
             return MemberResponse.response(savedMember);
         } catch (Exception e) {
             log.error("서버 예외 발생");
             throw new Exception(e);
+        }
+    }
+
+    private void deleteEmailVerification(String email) {
+        emailVerificationRepository.deleteByEmail(email);
+        log.info("{}에 해당하는 인증 정보 삭제", email);
+    }
+
+    private void checkEmailVerification(String email) {
+        EmailVerification foundEmailVerification = emailVerificationRepository.findFirstByEmailOrderByExpiredAtDesc(
+                email).orElseThrow(() -> new BadRequestException("인증 내역이 존재하지 않습니다."));
+        log.info("회원 가입 이메일 인증 여부 체크");
+        log.info("회원 가입 인증 여부 : {}", foundEmailVerification.isVerified());
+        log.info("회원 가입 유효 시간 여부 : {}", foundEmailVerification.getVerifiedAt());
+        log.info("현재 시간 : {} ", LocalDateTime.now());
+        if (!foundEmailVerification.isVerified()) {
+            throw new BadRequestException("이메일 인증을 진행하지 않은 사용자입니다.");
+        } else if (foundEmailVerification.getVerifiedAt().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("이메일 인증 유효 시간이 초과되었습니다.");
         }
     }
 
@@ -74,7 +96,8 @@ public class AuthService {
         return emailResponse;
     }
 
-    public EmailResponse authNumCheck(@Valid EmailRequest emailRequest) {
+    @Transactional
+    public EmailResponse authNumCheck(EmailRequest emailRequest) {
         log.info("인증번호로 이메일 인증 시작");
         String email = emailRequest.email();
         log.info("인증을 시도한 사용자 이메일 : {}", email);
@@ -84,6 +107,8 @@ public class AuthService {
         validationAuthNum(foundEmailVerification, authNum);
 
         foundEmailVerification.setVerified(true);
+        foundEmailVerification.setVerifiedAt(LocalDateTime.now().plusMinutes(5));
+        log.info("최신 인증 만료 시간 : {}", foundEmailVerification.getVerifiedAt());
         log.info("이메일 인증 여부 : {}", foundEmailVerification.isVerified());
 
         return EmailResponse.response(true);
@@ -105,7 +130,7 @@ public class AuthService {
         if (foundEmailVerification == null) {
             EmailVerification emailVerification = new EmailVerification(email, authNum,
                     false,
-                    LocalDateTime.now().plusMinutes(5));
+                    LocalDateTime.now().plusMinutes(5), null);
             emailVerificationRepository.save(emailVerification);
             log.info("저장된 인증번호 엔티티 정보: {}", emailVerification.toString());
         } else {
