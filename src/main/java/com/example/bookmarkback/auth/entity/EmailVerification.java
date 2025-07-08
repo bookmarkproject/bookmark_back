@@ -8,8 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class EmailVerification extends BaseEntity {
 
     public EmailVerification(String email, String code, boolean isVerified, LocalDateTime expiredAt) {
@@ -17,6 +19,13 @@ public class EmailVerification extends BaseEntity {
         this.code = code;
         this.isVerified = isVerified;
         this.expiredAt = expiredAt;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public EmailVerification() {
     }
 
     @Id
@@ -40,4 +49,13 @@ public class EmailVerification extends BaseEntity {
 
     @Column(name = "expired_at", nullable = false)
     private LocalDateTime expiredAt;
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setExpiredAt(LocalDateTime expiredAt) {
+        this.expiredAt = expiredAt;
+    }
+
 }

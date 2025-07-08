@@ -35,4 +35,10 @@ public class AuthController {
         EmailResponse emailResponse = authService.mailSend(emailDRequest);
         return ResponseEntity.ok(emailResponse);
     }
+
+    @PostMapping("/check")
+    public ResponseEntity<EmailResponse> authNumCheck(@RequestBody @Valid EmailRequest emailRequest) {
+        EmailResponse emailResponse = authService.authNumCheck(emailRequest);
+        return ResponseEntity.ok(emailResponse);
+    }
 }

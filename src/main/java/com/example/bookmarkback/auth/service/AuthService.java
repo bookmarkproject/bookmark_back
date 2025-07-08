@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +60,7 @@ public class AuthService {
         }
     }
 
+    @Transactional
     public EmailResponse mailSend(EmailRequest emailDRequest) {
         log.info("인증번호 발송 시작");
 
@@ -72,12 +74,45 @@ public class AuthService {
         return emailResponse;
     }
 
-    private void saveEmailVerificationInfo(String email, String authNum) {
-        EmailVerification emailVerification = new EmailVerification(email, authNum,
-                false,
-                LocalDateTime.now().plusMinutes(5));
+    public EmailResponse authNumCheck(@Valid EmailRequest emailRequest) {
+        log.info("인증번호로 이메일 인증 시작");
+        String email = emailRequest.email();
+        log.info("인증을 시도한 사용자 이메일 : {}", email);
+        String authNum = emailRequest.authNum();
+        EmailVerification foundEmailVerification = emailVerificationRepository.findFirstByEmailOrderByExpiredAtDesc(
+                email).orElseThrow(() -> new BadRequestException("인증번호를 발송하지 않은 사용자입니다."));
+        validationAuthNum(foundEmailVerification, authNum);
 
-        emailVerificationRepository.save(emailVerification);
+        foundEmailVerification.setVerified(true);
+        log.info("이메일 인증 여부 : {}", foundEmailVerification.isVerified());
+
+        return EmailResponse.response(true);
+    }
+
+    private static void validationAuthNum(EmailVerification foundEmailVerification, String authNum) {
+        log.info("인증번호 : {}, 사용자 입력 인증번호 : {}", foundEmailVerification.getCode(), authNum);
+        log.info("만료 시간 : {}, 현재 시간: {}", foundEmailVerification.getExpiredAt(), LocalDateTime.now());
+        if (!foundEmailVerification.getCode().equals(authNum)) {
+            throw new BadRequestException("인증번호가 일치하지 않습니다.");
+        } else if (foundEmailVerification.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("인증시간이 만료되었습니다.");
+        }
+    }
+
+    private void saveEmailVerificationInfo(String email, String authNum) {
+        EmailVerification foundEmailVerification = emailVerificationRepository.findFirstByEmailOrderByExpiredAtDesc(
+                email).orElse(null);
+        if (foundEmailVerification == null) {
+            EmailVerification emailVerification = new EmailVerification(email, authNum,
+                    false,
+                    LocalDateTime.now().plusMinutes(5));
+            emailVerificationRepository.save(emailVerification);
+            log.info("저장된 인증번호 엔티티 정보: {}", emailVerification.toString());
+        } else {
+            foundEmailVerification.setCode(authNum);
+            log.info("저장된 인증 번호: {}", authNum);
+            foundEmailVerification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
+        }
     }
 
     private Map<String, String> makeMessageForm(String toEmail) {
