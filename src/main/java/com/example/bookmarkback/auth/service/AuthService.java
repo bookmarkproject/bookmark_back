@@ -1,7 +1,5 @@
 package com.example.bookmarkback.auth.service;
 
-import com.example.bookmarkback.auth.dto.EmailRequest;
-import com.example.bookmarkback.auth.dto.EmailResponse;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
@@ -9,19 +7,9 @@ import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +21,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
-    
+
     @Transactional
     public MemberResponse signup(SignupRequest signupRequest) throws Exception {
         log.info("회원가입 시작");

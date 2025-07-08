@@ -2,7 +2,6 @@ package com.example.bookmarkback.auth.validator;
 
 import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.entity.Gender;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
