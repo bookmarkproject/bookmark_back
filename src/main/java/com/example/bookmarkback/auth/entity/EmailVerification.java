@@ -14,15 +14,21 @@ import lombok.Getter;
 @Getter
 public class EmailVerification extends BaseEntity {
 
-    public EmailVerification(String email, String code, boolean isVerified, LocalDateTime expiredAt) {
+    public EmailVerification(String email, String code, boolean isVerified, LocalDateTime expiredAt,
+                             LocalDateTime verifiedAt) {
         this.email = email;
         this.code = code;
         this.isVerified = isVerified;
         this.expiredAt = expiredAt;
+        this.verifiedAt = verifiedAt;
     }
 
     public void setVerified(boolean verified) {
         isVerified = verified;
+    }
+
+    public void setVerifiedAt(LocalDateTime verifiedAt) {
+        this.verifiedAt = verifiedAt;
     }
 
     public EmailVerification() {
@@ -49,6 +55,9 @@ public class EmailVerification extends BaseEntity {
 
     @Column(name = "expired_at", nullable = false)
     private LocalDateTime expiredAt;
+
+    @Column(name = "verified_at")
+    private LocalDateTime verifiedAt;
 
     public void setCode(String code) {
         this.code = code;
