@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.controller;
 
+import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.service.AuthService;
 import com.example.bookmarkback.member.dto.MemberResponse;
@@ -26,5 +27,11 @@ public class AuthController {
         MemberResponse memberResponse = authService.signup(signupRequest);
         return ResponseEntity.created(URI.create("/member/" + memberResponse.id()))
                 .body(memberResponse);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<MemberResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        MemberResponse memberResponse = authService.login(loginRequest);
+        return ResponseEntity.ok(memberResponse);
     }
 }

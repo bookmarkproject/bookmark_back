@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.service;
 
+import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
@@ -7,6 +8,7 @@ import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +45,18 @@ public class AuthService {
             throw new Exception(e);
         }
     }
-    
+
+    @Transactional
+    public MemberResponse login(LoginRequest loginRequest) {
+        Member foundMember = memberRepository.findByEmail(loginRequest.email())
+                .orElseThrow(() -> new BadRequestException("존재하지 않는 이메일입니다."));
+        if (!matchPassword(loginRequest.password(), foundMember.getPassword())) {
+            throw new BadRequestException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return MemberResponse.response(foundMember, getAccessToken());
+    }
+
 
     private void deleteEmailVerification(String email) {
         emailVerificationRepository.deleteByEmail(email);
@@ -66,6 +79,10 @@ public class AuthService {
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    private boolean matchPassword(String rawPassword, String hashedPassword) {
+        return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 
     private void checkDuplicationEmail(String email) {
