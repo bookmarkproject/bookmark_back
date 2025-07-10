@@ -3,6 +3,7 @@ package com.example.bookmarkback.auth.service;
 import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
+import com.example.bookmarkback.auth.infra.JwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
@@ -23,6 +24,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final JwtUtils jwtUtils;
 
     @Transactional
     public MemberResponse signup(SignupRequest signupRequest) throws Exception {
@@ -54,7 +56,7 @@ public class AuthService {
             throw new BadRequestException("비밀번호가 일치하지 않습니다.");
         }
 
-        return MemberResponse.response(foundMember, getAccessToken());
+        return MemberResponse.response(foundMember, jwtUtils.createAccessToken(foundMember));
     }
 
 
