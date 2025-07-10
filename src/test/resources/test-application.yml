@@ -40,3 +40,6 @@ server:
 jwt:
   secret-key: test_key
   access-expiration: 1800000
+
+testing:
+  email: ${TEST_EMAIL}

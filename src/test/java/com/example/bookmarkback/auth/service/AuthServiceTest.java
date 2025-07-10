@@ -102,7 +102,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("메일 인증 유효 시간이 초과되면 회원가입시 예외가 발생한다.")
+    @DisplayName("메일 인증 유효 시간이 지나면 회원가입시 예외가 발생한다.")
     void signupAfterValidTime() {
         SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
         EmailVerification emailVerification = new EmailVerification(signupRequest.email(), "643654", true,
@@ -112,7 +112,6 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.signup(signupRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("이메일 인증 유효 시간이 초과되었습니다.");
-
     }
 
     private SignupRequest getTestSignupRequest(String email, String nickname) {

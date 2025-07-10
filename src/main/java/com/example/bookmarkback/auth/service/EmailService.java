@@ -35,10 +35,10 @@ public class EmailService {
         log.info("인증번호 발송 시작");
 
         Map<String, String> mailInfos = makeMessageForm(emailDRequest.email());
+        saveEmailVerificationInfo(emailDRequest.email(), mailInfos.get("authNum"));
+
         sendMailLogic(mailInfos.get("setFrom"), mailInfos.get("toMail"), mailInfos.get("title"),
                 mailInfos.get("content"));
-
-        saveEmailVerificationInfo(emailDRequest.email(), mailInfos.get("authNum"));
 
         EmailResponse emailResponse = EmailResponse.response(false);
         return emailResponse;
