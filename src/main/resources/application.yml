@@ -9,7 +9,9 @@ application:
 host:
   email: ${NAVER_ID}
   password: ${NAVER_PASSWORD}
-  
+
+jwt:
+  access-expiration: 1800000
 ---
 #local
 spring:
@@ -49,3 +51,6 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  secret-key: ${JWT_TOKEN_SECRET_KEY_DEV}
