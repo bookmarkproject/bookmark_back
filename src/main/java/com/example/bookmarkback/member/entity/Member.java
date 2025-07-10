@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Entity
@@ -17,7 +18,7 @@ import lombok.Getter;
 public class Member extends BaseEntity {
     public Member(String email, String password, String name, String nickname, String gender,
                   String phoneNumber,
-                  LocalDate birthday, String profileImage) {
+                  LocalDate birthday, String profileImage, LocalDateTime lastLoginAt) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -27,6 +28,7 @@ public class Member extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.birthday = birthday;
         this.profileImage = profileImage;
+        this.lastLoginAt = lastLoginAt;
     }
 
     public Member() {
@@ -70,4 +72,11 @@ public class Member extends BaseEntity {
 
     @Column(name = "profile_image")
     private String profileImage;
+
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+
+    public void setLastLoginAt(LocalDateTime lastLoginAt) {
+        this.lastLoginAt = lastLoginAt;
+    }
 }

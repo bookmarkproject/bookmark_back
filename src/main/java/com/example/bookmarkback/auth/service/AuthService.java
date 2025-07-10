@@ -43,6 +43,7 @@ public class AuthService {
             throw new Exception(e);
         }
     }
+    
 
     private void deleteEmailVerification(String email) {
         emailVerificationRepository.deleteByEmail(email);

@@ -34,6 +34,6 @@ public record SignupRequest(
     }
 
     public Member toMember(String encodedPassword) {
-        return new Member(email, encodedPassword, name, nickname, gender, phoneNumber, birthday, null);
+        return new Member(email, encodedPassword, name, nickname, gender, phoneNumber, birthday, null, null);
     }
 }

@@ -331,7 +331,7 @@ class AuthControllerTest {
 
     private Member getTestMember() {
         return new Member("kkk@gmail.com", "testpassword", "김철수", "포포뇽", "남자", "01012345678",
-                LocalDate.of(1900, 12, 21), null);
+                LocalDate.of(1900, 12, 21), null, null);
     }
 
 }
