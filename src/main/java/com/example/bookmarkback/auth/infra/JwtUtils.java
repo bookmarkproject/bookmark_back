@@ -42,7 +42,7 @@ public class JwtUtils {
         Date now = new Date();
 
         return Jwts.builder()
-                .claim(JWT_MEMBER_ID_KEY, member.getId())
+                .claim(JWT_MEMBER_ID_KEY, String.valueOf(member.getId()))
                 .issuer(issuer)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + expirationTime))
