@@ -45,6 +45,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return super.shouldNotFilter(request);
+        return PublicEndpoint.isPublicEndpoint(request);
     }
 }
