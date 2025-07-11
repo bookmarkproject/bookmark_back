@@ -55,7 +55,7 @@ class JwtUtilsTest {
 
         Claims claims = testParsePayload(accessToken);
 
-        assertThat(Long.valueOf(claims.get(JwtUtils.JWT_MEMBER_ID_KEY, String.class))).isEqualTo(1L);
+        assertThat(Long.valueOf(claims.get(JwtUtils.JWT_MEMBER_ID_KEY, String.class))).isEqualTo(savedMember.getId());
         assertThat(claims.getIssuer()).isEqualTo(issuer);
     }
 

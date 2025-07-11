@@ -44,5 +44,11 @@ public record MemberResponse(
                 .accessToken(accessToken)
                 .build();
     }
+
+    public static MemberResponse response(String email) {
+        return MemberResponse.builder()
+                .email(email)
+                .build();
+    }
 }
 

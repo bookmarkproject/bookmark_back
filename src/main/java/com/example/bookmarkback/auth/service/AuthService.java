@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.service;
 
+import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
@@ -59,6 +60,14 @@ public class AuthService {
         return MemberResponse.response(foundMember, jwtUtils.createAccessToken(foundMember));
     }
 
+    @Transactional(readOnly = true)
+    public MemberResponse findEmail(FindEmailRequest findEmailRequest) {
+        Member foundMember = memberRepository.findByNameAndPhoneNumber(findEmailRequest.name(),
+                        findEmailRequest.phoneNumber())
+                .orElseThrow(() -> new BadRequestException("해당 정보를 가진 계정이 존재하지 않습니다."));
+
+        return MemberResponse.response(foundMember.getEmail());
+    }
 
     private void deleteEmailVerification(String email) {
         emailVerificationRepository.deleteByEmail(email);

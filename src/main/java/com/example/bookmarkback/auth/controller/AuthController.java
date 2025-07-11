@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.controller;
 
+import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.service.AuthService;
@@ -32,6 +33,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<MemberResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         MemberResponse memberResponse = authService.login(loginRequest);
+        return ResponseEntity.ok(memberResponse);
+    }
+    
+    @PostMapping("/find/email")
+    public ResponseEntity<MemberResponse> findEmail(@Valid @RequestBody FindEmailRequest findEmailRequest) {
+        MemberResponse memberResponse = authService.findEmail(findEmailRequest);
         return ResponseEntity.ok(memberResponse);
     }
 }
