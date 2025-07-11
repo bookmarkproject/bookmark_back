@@ -3,6 +3,7 @@ package com.example.bookmarkback.auth.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
@@ -112,6 +113,42 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.signup(signupRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("이메일 인증 유효 시간이 초과되었습니다.");
+    }
+
+    @Test
+    @DisplayName("로그인을 할 수 있다.")
+    public void loginTest() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        MemberResponse signupedMember = authService.signup(signupRequest);
+
+        LoginRequest loginRequest = LoginRequest.builder().email("kkk@gmail.com").password("afkak21@!#2gr").build();
+        MemberResponse loginedMember = authService.login(loginRequest);
+
+        assertThat(loginedMember.email()).isEqualTo(signupedMember.email());
+        assertThat(loginedMember.accessToken()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("이메일이 일치하지 않으면 예외가 발생한다.")
+    public void loginNotMatchEmail() throws Exception {
+        LoginRequest loginRequest = LoginRequest.builder().email("kkk@gmail.com").password("afkak21@!#2gr").build();
+        assertThatThrownBy(() -> authService.login(loginRequest))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("존재하지 않는 이메일입니다.");
+    }
+
+    @Test
+    @DisplayName("비밀번호가 일치하지 않으면 예외가 발생한다.")
+    public void loginNotMatchPassword() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+
+        LoginRequest loginRequest = LoginRequest.builder().email("kkk@gmail.com").password("afgk21@!#2gr").build();
+        assertThatThrownBy(() -> authService.login(loginRequest))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("비밀번호가 일치하지 않습니다.");
     }
 
     private SignupRequest getTestSignupRequest(String email, String nickname) {
