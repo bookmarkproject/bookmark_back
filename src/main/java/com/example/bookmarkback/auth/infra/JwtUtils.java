@@ -82,9 +82,17 @@ public class JwtUtils {
                 .parseSignedClaims(jwtToken)
                 .getPayload();
 
+        validateIssuer(claims.getIssuer());
+
         data.put(JWT_MEMBER_ID_KEY, Long.valueOf(claims.get(JWT_MEMBER_ID_KEY, String.class)));
         data.put(JWT_ROLE_KEY, claims.get(JWT_ROLE_KEY, String.class));
 
         return data;
+    }
+
+    private void validateIssuer(String issuer) {
+        if (!issuer.equals(this.issuer)) {
+            throw new UnauthorizedException("해당 서비스에서 발급 받은 토큰이 아닙니다.");
+        }
     }
 }
