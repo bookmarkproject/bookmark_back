@@ -38,10 +38,14 @@ logging:
 server:
   port: 8082
 jwt:
-  access-secret-key: test_key_test_key_test_key_test_key_test_key_test_key_test_key_test_key
-  access-expiration: 1800000
-  password-secret-key: password_key_password_key_password_key_password_key_password_key_password_key
-  password-expiration: 300000
+  access:
+    expiration: 1800000
+    secret:
+      key: test_key_test_key_test_key_test_key_test_key_test_key_test_key_test_key
+  password:
+    expiration: 300000
+    secret:
+      key: password_key_password_key_password_key_password_key_password_key_password_key
 
 testing:
   email: ${TEST_EMAIL}
