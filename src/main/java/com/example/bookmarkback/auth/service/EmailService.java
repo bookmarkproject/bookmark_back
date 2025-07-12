@@ -74,12 +74,13 @@ public class EmailService {
         log.info("최신 인증 만료 시간 : {}", foundEmailVerification.getVerifiedAt());
         log.info("이메일 인증 여부 : {}", foundEmailVerification.isVerified());
 
-        if (AuthCheckType.toEnum(emailRequest.type()).equals(AuthCheckType.SIGNUP)) {
-            return EmailResponse.response(true);
-        } else if (AuthCheckType.toEnum(emailRequest.type()).equals(AuthCheckType.PASSWORDCHANGE)) {
+        if (emailRequest.type() != null && AuthCheckType.toEnum(emailRequest.type())
+                .equals(AuthCheckType.PASSWORDCHANGE)) {
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new BadRequestException("가입된 이메일이 존재하지 않습니다."));
             return EmailResponse.response(true, jwtUtils.createAccessToken(member));
+        } else {
+            return EmailResponse.response(true);
         }
     }
 

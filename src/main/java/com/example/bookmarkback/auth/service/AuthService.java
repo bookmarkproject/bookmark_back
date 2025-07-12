@@ -6,15 +6,14 @@ import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
 import com.example.bookmarkback.auth.infra.JwtUtils;
+import com.example.bookmarkback.auth.infra.PasswordChangeJwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,15 +28,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
     private final JwtUtils jwtUtils;
+    private final PasswordChangeJwtUtils passwordChangeJwtUtils;
 
     @Autowired
     public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder,
                        EmailVerificationRepository emailVerificationRepository,
-                       @Qualifier("loginJwtUtils") JwtUtils jwtUtils) {
+                       @Qualifier("loginJwtUtils") JwtUtils jwtUtils, PasswordChangeJwtUtils passwordChangeJwtUtils) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailVerificationRepository = emailVerificationRepository;
         this.jwtUtils = jwtUtils;
+        this.passwordChangeJwtUtils = passwordChangeJwtUtils;
     }
 
     @Transactional
@@ -82,11 +83,23 @@ public class AuthService {
         return MemberResponse.response(foundMember.getEmail());
     }
 
+    @Transactional
     public void changePassword(@Valid ChangePasswordRequest changePasswordRequest) {
-        Member foundMember = memberRepository.findByEmail(changePasswordRequest.email())
-                .orElseThrow(() -> new BadRequestException("해당 이메일의 계정이 존재하지 않습니다."));
+        Long memberId = extractToken(changePasswordRequest.token());
+        Member foundMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BadRequestException("해당 토큰에 해당하는 계정이 존재하지 않습니다."));
+
+        checkEmailVerification(foundMember.getEmail());
 
         foundMember.setPassword(encodePassword(changePasswordRequest.password()));
+        deleteEmailVerification(foundMember.getEmail());
+    }
+
+    private Long extractToken(String token) {
+        String extractedToken = passwordChangeJwtUtils.extractToken(token);
+        Long memberId = (Long) passwordChangeJwtUtils.extractMemberIdAndRole(extractedToken)
+                .get(JwtUtils.JWT_MEMBER_ID_KEY);
+        return Long.valueOf(memberId);
     }
 
     private void deleteEmailVerification(String email) {
