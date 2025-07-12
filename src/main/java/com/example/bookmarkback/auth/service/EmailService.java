@@ -1,11 +1,14 @@
 package com.example.bookmarkback.auth.service;
 
+import com.example.bookmarkback.auth.dto.AuthCheckType;
 import com.example.bookmarkback.auth.dto.EmailRequest;
 import com.example.bookmarkback.auth.dto.EmailResponse;
 import com.example.bookmarkback.auth.entity.EmailVerification;
 import com.example.bookmarkback.auth.infra.JwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
+import com.example.bookmarkback.member.entity.Member;
+import com.example.bookmarkback.member.repository.MemberRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -32,12 +35,14 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final EmailVerificationRepository emailVerificationRepository;
     private final JwtUtils jwtUtils;
+    private final MemberRepository memberRepository;
 
     public EmailService(JavaMailSender javaMailSender, EmailVerificationRepository emailVerificationRepository,
-                        @Qualifier("passwordChangeJwtUtils") JwtUtils jwtUtils) {
+                        @Qualifier("passwordChangeJwtUtils") JwtUtils jwtUtils, MemberRepository memberRepository) {
         this.javaMailSender = javaMailSender;
         this.emailVerificationRepository = emailVerificationRepository;
         this.jwtUtils = jwtUtils;
+        this.memberRepository = memberRepository;
     }
 
     @Transactional
@@ -69,7 +74,13 @@ public class EmailService {
         log.info("최신 인증 만료 시간 : {}", foundEmailVerification.getVerifiedAt());
         log.info("이메일 인증 여부 : {}", foundEmailVerification.isVerified());
 
-        return EmailResponse.response(true);
+        if (AuthCheckType.toEnum(emailRequest.type()).equals(AuthCheckType.SIGNUP)) {
+            return EmailResponse.response(true);
+        } else if (AuthCheckType.toEnum(emailRequest.type()).equals(AuthCheckType.PASSWORDCHANGE)) {
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new BadRequestException("가입된 이메일이 존재하지 않습니다."));
+            return EmailResponse.response(true, jwtUtils.createAccessToken(member));
+        }
     }
 
     private static void validationAuthNum(EmailVerification foundEmailVerification, String authNum) {
