@@ -7,8 +7,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.AntPathMatcher;
 
 public enum PublicEndpoint {
-    MailEndpoint(HttpMethod.POST, "/mail/**"),
-    AuthEndpoint(HttpMethod.POST, "/auth/**");
+    MailPostEndpoint(HttpMethod.POST, "/mail/**"),
+    AuthPostEndpoint(HttpMethod.POST, "/auth/**"),
+    AuthGetEndpoint(HttpMethod.GET, "/auth/**");
 
     private static final List<PublicEndpoint> PUBLIC_ENDPOINTS = Arrays.asList(values());
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();

@@ -95,6 +95,11 @@ public class AuthService {
         deleteEmailVerification(foundMember.getEmail());
     }
 
+    public Boolean checkNicknameDuplication(String nickname) {
+        checkDuplicationNickname(nickname);
+        return true;
+    }
+
     private Long extractToken(String token) {
         String extractedToken = passwordChangeJwtUtils.extractToken(token);
         Long memberId = (Long) passwordChangeJwtUtils.extractMemberIdAndRole(extractedToken)
@@ -142,6 +147,5 @@ public class AuthService {
             throw new BadRequestException("이미 사용중인 닉네임입니다.");
         }
     }
-
 
 }
