@@ -14,40 +14,28 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
-public class JwtUtils {
+public abstract class JwtUtils {
     private final static String JWT_TOKEN_PREFIX = "Bearer ";
 
     public final static String JWT_MEMBER_ID_KEY = "member_id";
     public final static String JWT_ROLE_KEY = "role";
 
-    private final String issuer;
-    private final Long expirationTime;
-    private final SecretKey secretKey;
+    protected abstract String getSecretKey();
 
-    public JwtUtils(
-            @Value(value = "${application.name}")
-            String issuer,
-            @Value(value = "${jwt.access-expiration}")
-            Long expirationTime,
-            @Value(value = "${jwt.secret-key}")
-            String secretKey
-    ) {
-        this.issuer = issuer;
-        this.expirationTime = expirationTime;
-        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
-    }
+    protected abstract long getExpirationMillis();
+
+    protected abstract String getIssuer();
 
     public String createAccessToken(Member member) {
         Date now = new Date();
 
         return Jwts.builder()
                 .claim(JWT_MEMBER_ID_KEY, String.valueOf(member.getId()))
-                .issuer(issuer)
+                .issuer(getIssuer())
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + expirationTime))
+                .expiration(new Date(now.getTime() + getExpirationMillis()))
                 .claim(JWT_ROLE_KEY, member.getRole())
-                .signWith(secretKey)
+                .signWith(Keys.hmacShaKeyFor(getSecretKey().getBytes()))
                 .compact();
     }
 
@@ -77,7 +65,7 @@ public class JwtUtils {
         Map<String, Object> data = new HashMap<>();
 
         Claims claims = Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(Keys.hmacShaKeyFor(getSecretKey().getBytes()))
                 .build()
                 .parseSignedClaims(jwtToken)
                 .getPayload();
@@ -91,7 +79,7 @@ public class JwtUtils {
     }
 
     private void validateIssuer(String issuer) {
-        if (!issuer.equals(this.issuer)) {
+        if (!issuer.equals(getIssuer())) {
             throw new UnauthorizedException("해당 서비스에서 발급 받은 토큰이 아닙니다.");
         }
     }

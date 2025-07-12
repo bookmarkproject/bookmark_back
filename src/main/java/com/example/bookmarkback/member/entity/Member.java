@@ -79,4 +79,8 @@ public class Member extends BaseEntity {
     public void setLastLoginAt(LocalDateTime lastLoginAt) {
         this.lastLoginAt = lastLoginAt;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

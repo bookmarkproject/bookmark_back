@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.controller;
 
+import com.example.bookmarkback.auth.dto.ChangePasswordRequest;
 import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
@@ -35,10 +36,16 @@ public class AuthController {
         MemberResponse memberResponse = authService.login(loginRequest);
         return ResponseEntity.ok(memberResponse);
     }
-    
+
     @PostMapping("/find/email")
     public ResponseEntity<MemberResponse> findEmail(@Valid @RequestBody FindEmailRequest findEmailRequest) {
         MemberResponse memberResponse = authService.findEmail(findEmailRequest);
         return ResponseEntity.ok(memberResponse);
+    }
+
+    @PostMapping("/change/password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+        authService.changePassword(changePasswordRequest);
+        return ResponseEntity.noContent().build();
     }
 }

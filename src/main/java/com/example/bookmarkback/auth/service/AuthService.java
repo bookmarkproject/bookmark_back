@@ -1,5 +1,6 @@
 package com.example.bookmarkback.auth.service;
 
+import com.example.bookmarkback.auth.dto.ChangePasswordRequest;
 import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
@@ -10,22 +11,34 @@ import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
     private final JwtUtils jwtUtils;
+
+    @Autowired
+    public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder,
+                       EmailVerificationRepository emailVerificationRepository,
+                       @Qualifier("loginJwtUtils") JwtUtils jwtUtils) {
+        this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.emailVerificationRepository = emailVerificationRepository;
+        this.jwtUtils = jwtUtils;
+    }
 
     @Transactional
     public MemberResponse signup(SignupRequest signupRequest) throws Exception {
@@ -69,6 +82,13 @@ public class AuthService {
         return MemberResponse.response(foundMember.getEmail());
     }
 
+    public void changePassword(@Valid ChangePasswordRequest changePasswordRequest) {
+        Member foundMember = memberRepository.findByEmail(changePasswordRequest.email())
+                .orElseThrow(() -> new BadRequestException("해당 이메일의 계정이 존재하지 않습니다."));
+
+        foundMember.setPassword(encodePassword(changePasswordRequest.password()));
+    }
+
     private void deleteEmailVerification(String email) {
         emailVerificationRepository.deleteByEmail(email);
         log.info("{}에 해당하는 인증 정보 삭제", email);
@@ -109,5 +129,6 @@ public class AuthService {
             throw new BadRequestException("이미 사용중인 닉네임입니다.");
         }
     }
+
 
 }

@@ -3,8 +3,10 @@ package com.example.bookmarkback.auth.service;
 import com.example.bookmarkback.auth.dto.EmailRequest;
 import com.example.bookmarkback.auth.dto.EmailResponse;
 import com.example.bookmarkback.auth.entity.EmailVerification;
+import com.example.bookmarkback.auth.infra.JwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -21,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class EmailService {
 
     @Value("${host.email}")
@@ -29,6 +31,14 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final JwtUtils jwtUtils;
+
+    public EmailService(JavaMailSender javaMailSender, EmailVerificationRepository emailVerificationRepository,
+                        @Qualifier("passwordChangeJwtUtils") JwtUtils jwtUtils) {
+        this.javaMailSender = javaMailSender;
+        this.emailVerificationRepository = emailVerificationRepository;
+        this.jwtUtils = jwtUtils;
+    }
 
     @Transactional
     public EmailResponse mailSend(EmailRequest emailDRequest) {
