@@ -36,11 +36,11 @@ class JwtUtilsTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @Value(value = "${jwt.secret-key}")
+    @Value(value = "${jwt.access.secret.key}")
     private String secretKey;
     @Value(value = "${application.name}")
     private String issuer;
-    @Value(value = "${jwt.access-expiration}")
+    @Value(value = "${jwt.access.expiration}")
     private Long expirationTime;
 
     @AfterEach
