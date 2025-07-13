@@ -9,6 +9,7 @@ import com.example.bookmarkback.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecretKeyAlgorithm;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Map;
@@ -33,6 +34,10 @@ class JwtUtilsTest {
     @Autowired
     @Qualifier("loginJwtUtils")
     JwtUtils jwtUtils;
+
+    @Autowired
+    PasswordChangeJwtUtils passwordChangeJwtUtils;
+
     @Autowired
     MemberRepository memberRepository;
 
@@ -58,6 +63,28 @@ class JwtUtilsTest {
 
         assertThat(Long.valueOf(claims.get(JwtUtils.JWT_MEMBER_ID_KEY, String.class))).isEqualTo(savedMember.getId());
         assertThat(claims.getIssuer()).isEqualTo(issuer);
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경용 토큰으로 엑세스 토큰 추출 로직에 적용하면 예외가 발생한다.")
+    void changePasswordTokenToAccessException() {
+        Member savedMember = memberRepository.save(getTestMember());
+        String changePasswordToken = passwordChangeJwtUtils.createAccessToken(savedMember);
+
+        assertThatThrownBy(() -> jwtUtils.extractMemberIdAndRole(changePasswordToken))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("유효하지 않은 JWT 토큰입니다.");
+    }
+
+    @Test
+    @DisplayName("엑세스 토큰으로 비밀번호 토큰 추출 로직에 적용하면 예외가 발생한다.")
+    void accessTokenToChangePasswordException() {
+        Member savedMember = memberRepository.save(getTestMember());
+        String changePasswordToken = jwtUtils.createAccessToken(savedMember);
+
+        assertThatThrownBy(() -> passwordChangeJwtUtils.extractMemberIdAndRole(changePasswordToken))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("유효하지 않은 JWT 토큰입니다.");
     }
 
     @Test
@@ -126,18 +153,5 @@ class JwtUtilsTest {
                 .build()
                 .parseSignedClaims(jwtToken)
                 .getPayload();
-    }
-
-    private String customCreateToken(Member member, String iss) {
-        Date now = new Date();
-
-        return Jwts.builder()
-                .claim(JwtUtils.JWT_MEMBER_ID_KEY, member.getId())
-                .issuer(iss)
-                .issuedAt(now)
-                .expiration(new Date(now.getTime() + expirationTime))
-                .claim(JwtUtils.JWT_ROLE_KEY, member.getRole())
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
     }
 }

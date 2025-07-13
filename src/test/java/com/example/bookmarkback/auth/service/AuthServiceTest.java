@@ -3,9 +3,12 @@ package com.example.bookmarkback.auth.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.example.bookmarkback.auth.dto.ChangePasswordRequest;
+import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
+import com.example.bookmarkback.auth.infra.PasswordChangeJwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
@@ -34,6 +37,9 @@ class AuthServiceTest {
 
     @Autowired
     private EmailVerificationRepository emailVerificationRepository;
+
+    @Autowired
+    private PasswordChangeJwtUtils passwordChangeJwtUtils;
 
     @AfterEach
     void tearDown() {
@@ -149,6 +155,99 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login(loginRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("비밀번호가 일치하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("이름과 전화번호로 이메일을 찾을 수 있다.")
+    public void findEmailTest() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+
+        FindEmailRequest findEmailRequest = FindEmailRequest.builder()
+                .name("김철수")
+                .phoneNumber("01012345678")
+                .build();
+        MemberResponse response = authService.findEmail(findEmailRequest);
+
+        assertThat(response.email()).isEqualTo(signupRequest.email());
+    }
+
+    @Test
+    @DisplayName("이메일을 찾을 때 해당 계정이 존재하지 않으면 예외가 발생한다.")
+    public void notfoundEmailTest() {
+        FindEmailRequest findEmailRequest = FindEmailRequest.builder()
+                .name("김철수")
+                .phoneNumber("01012345678")
+                .build();
+
+        assertThatThrownBy(() -> authService.findEmail(findEmailRequest))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("해당 정보를 가진 계정이 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경을 할 수 있다.")
+    public void changePasswordTest() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        MemberResponse signupedMember = authService.signup(signupRequest);
+        Member member = memberRepository.findByEmail(signupedMember.email()).orElse(null);
+        String passwordChangeToken = passwordChangeJwtUtils.createAccessToken(member);
+
+        ChangePasswordRequest changePasswordRequest = ChangePasswordRequest.builder().password("abc123!@#")
+                .token("Bearer " + passwordChangeToken)
+                .build();
+        saveEmailVerification(signupRequest.email(), true);
+        authService.changePassword(changePasswordRequest);
+        LoginRequest loginRequest = LoginRequest.builder().email("kkk@gmail.com").password("abc123!@#").build();
+        MemberResponse memberResponse = authService.login(loginRequest);
+
+        assertThat(memberResponse.id()).isEqualTo(member.getId());
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경을 할 때 토큰에 해당하는 계정이 없으면 예외가 발생.")
+    public void changePasswordNotAccountTest() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        MemberResponse signupedMember = authService.signup(signupRequest);
+        Member member = memberRepository.findByEmail(signupedMember.email()).orElse(null);
+        String passwordChangeToken = passwordChangeJwtUtils.createAccessToken(member);
+        memberRepository.delete(member);
+
+        ChangePasswordRequest changePasswordRequest = ChangePasswordRequest.builder().password("abc123!@#")
+                .token("Bearer " + passwordChangeToken)
+                .build();
+        saveEmailVerification(signupRequest.email(), true);
+        assertThatThrownBy(() -> authService.changePassword(changePasswordRequest))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("해당 토큰에 해당하는 계정이 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 확인을 할 수 있다.")
+    public void checkDuplicationNickName() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+
+        Boolean isDuplicated = authService.checkNicknameDuplication("끠끠");
+
+        assertThat(isDuplicated).isFalse();
+    }
+
+    @Test
+    @DisplayName("중복된 닉네임이 있으면 예외 발생.")
+    public void checkDuplicationNickNameException() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+
+        assertThatThrownBy(() -> authService.checkNicknameDuplication("포파"))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("이미 사용중인 닉네임입니다.");
+
     }
 
     private SignupRequest getTestSignupRequest(String email, String nickname) {

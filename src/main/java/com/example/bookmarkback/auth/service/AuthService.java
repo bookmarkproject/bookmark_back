@@ -98,7 +98,7 @@ public class AuthService {
 
     public Boolean checkNicknameDuplication(String nickname) {
         checkDuplicationNickname(nickname);
-        return true;
+        return false;
     }
 
     private Long extractToken(String token) {
