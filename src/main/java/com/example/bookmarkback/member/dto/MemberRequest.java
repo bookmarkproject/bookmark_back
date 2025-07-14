@@ -16,7 +16,7 @@ public record MemberRequest(
         String nickname,
         @NotBlank(message = "성별은 필수 항목입니다.")
         String gender,
-        @NotBlank(message = "전화번호는 필수 항목입니다.")
+        @NotBlank(message = "휴대폰 번호는 필수 항목입니다.")
         String phoneNumber,
         @NotBlank(message = "생년월일은 필수 항목입니다.")
         LocalDate birthday,

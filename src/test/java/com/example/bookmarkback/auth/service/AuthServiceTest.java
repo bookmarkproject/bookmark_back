@@ -158,7 +158,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("이름과 전화번호로 이메일을 찾을 수 있다.")
+    @DisplayName("이름과 휴대폰 번호로 이메일을 찾을 수 있다.")
     public void findEmailTest() throws Exception {
         SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
         saveEmailVerification(signupRequest.email(), true);
