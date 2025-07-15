@@ -3,6 +3,8 @@ package com.example.bookmarkback.auth.controller;
 import com.example.bookmarkback.auth.dto.ChangePasswordRequest;
 import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
+import com.example.bookmarkback.auth.dto.RefreshTokenRequest;
+import com.example.bookmarkback.auth.dto.RefreshTokenResponse;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.service.AuthService;
 import com.example.bookmarkback.member.dto.MemberResponse;
@@ -55,5 +57,12 @@ public class AuthController {
     public ResponseEntity<Boolean> checkDuplicationNickname(@RequestParam("nickname") String nickname) {
         Boolean isDuplicated = authService.checkNicknameDuplication(nickname);
         return ResponseEntity.ok(isDuplicated);
+    }
+
+    @PostMapping("/refresh/token")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        RefreshTokenResponse response = authService.refreshToken(refreshTokenRequest);
+        return ResponseEntity.ok(response);
     }
 }

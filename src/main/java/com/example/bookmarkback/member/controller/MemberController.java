@@ -6,6 +6,7 @@ import com.example.bookmarkback.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,11 @@ public class MemberController {
     public ResponseEntity<MemberResponse> getMyInfo(MemberAuth memberAuth) {
         MemberResponse memberResponse = memberService.getMyInfo(memberAuth);
         return ResponseEntity.ok(memberResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(MemberAuth memberAuth) {
+        memberService.logout(memberAuth);
+        return ResponseEntity.noContent().build();
     }
 }

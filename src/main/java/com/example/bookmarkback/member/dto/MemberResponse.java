@@ -16,7 +16,8 @@ public record MemberResponse(
         String role,
         LocalDate birthday,
         String profileImage,
-        String accessToken
+        String accessToken,
+        String refreshToken
 ) {
     public static MemberResponse response(Member member) {
         return MemberResponse.builder()
@@ -31,7 +32,7 @@ public record MemberResponse(
                 .build();
     }
 
-    public static MemberResponse response(Member member, String accessToken) {
+    public static MemberResponse response(Member member, String accessToken, String refreshToken) {
         return MemberResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
@@ -42,6 +43,7 @@ public record MemberResponse(
                 .birthday(member.getBirthday())
                 .profileImage(member.getProfileImage())
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
