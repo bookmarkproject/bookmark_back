@@ -1,13 +1,17 @@
 package com.example.bookmarkback.auth.service;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.bookmarkback.auth.dto.ChangePasswordRequest;
 import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
+import com.example.bookmarkback.auth.dto.RefreshTokenRequest;
+import com.example.bookmarkback.auth.dto.RefreshTokenResponse;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
+import com.example.bookmarkback.auth.entity.RefreshToken;
 import com.example.bookmarkback.auth.infra.PasswordChangeJwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
 import com.example.bookmarkback.auth.repository.RefreshTokenRepository;
@@ -138,6 +142,7 @@ class AuthServiceTest {
 
         assertThat(loginedMember.email()).isEqualTo(signupedMember.email());
         assertThat(loginedMember.accessToken()).isNotNull();
+        assertThat(loginedMember.refreshToken()).isNotNull();
     }
 
     @Test
@@ -160,6 +165,32 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login(loginRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("비밀번호가 일치하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("로그인을 할 때 리프레쉬 토큰이 있으면 업데이트 한다.")
+    public void loginExistRefreshToken() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+        LoginRequest loginRequest = LoginRequest.builder().email("kkk@gmail.com").password("afkak21@!#2gr").build();
+        MemberResponse loginedMember = authService.login(loginRequest);
+        MemberResponse loginedMember2 = authService.login(loginRequest);
+
+        assertThat(loginedMember.refreshToken()).isNotEqualTo(loginedMember2.refreshToken());
+    }
+
+    @Test
+    @DisplayName("로그인을 할 때 리프레쉬 토큰이 없으면 새로 만든다.")
+    public void loginNotExistRefreshToken() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+        LoginRequest loginRequest = LoginRequest.builder().email("kkk@gmail.com").password("afkak21@!#2gr").build();
+        MemberResponse loginedMember = authService.login(loginRequest);
+
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(loginedMember.refreshToken()).orElse(null);
+        assertThat(refreshToken).isNotNull();
     }
 
     @Test
@@ -255,6 +286,34 @@ class AuthServiceTest {
 
     }
 
+    @Test
+    @DisplayName("리프레쉬하면 새로운 토큰을 발급받을 수 있다.")
+    public void refreshTokenTest() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+        LoginRequest loginRequest = LoginRequest.builder().email("kkk@gmail.com").password("afkak21@!#2gr").build();
+        MemberResponse loginedMember = authService.login(loginRequest);
+
+        RefreshTokenResponse response = authService.refreshToken(
+                RefreshTokenRequest.builder().refreshToken(loginedMember.refreshToken()).build());
+
+        assertThat(response.accessToken()).isNotNull();
+        assertThat(response.refreshToken()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("리프레쉬할때 DB에 없으면 예외가 발생한다.")
+    public void refreshTokenNotExistDbTest() throws Exception {
+        SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+        saveEmailVerification(signupRequest.email(), true);
+        authService.signup(signupRequest);
+
+        assertThatThrownBy(() -> authService.refreshToken(RefreshTokenRequest.builder().refreshToken("aaa").build()))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("RefreshToken이 존재하지 않습니다.");
+    }
+    
     private SignupRequest getTestSignupRequest(String email, String nickname) {
         return SignupRequest.builder()
                 .email(email)

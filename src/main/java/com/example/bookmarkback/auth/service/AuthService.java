@@ -87,8 +87,11 @@ public class AuthService {
             foundToken.setToken(refreshToken);
             foundToken.setExpiredAt(LocalDateTime.now().plusDays(14));
         } else {
-            refreshTokenRepository.save(new RefreshToken(foundMember, refreshToken, LocalDateTime.now().plusDays(14)));
+            RefreshToken savedToken = refreshTokenRepository.save(
+                    new RefreshToken(foundMember, refreshToken, LocalDateTime.now().plusDays(14)));
+            log.info("리프레쉬 토큰 만료 시간: {}", savedToken.getExpiredAt());
         }
+
         return MemberResponse.response(foundMember, jwtUtils.createAccessToken(foundMember), refreshToken);
     }
 
