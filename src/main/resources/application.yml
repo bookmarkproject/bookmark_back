@@ -6,6 +6,15 @@ spring:
 application:
   name: Bookmark
 
+host:
+  email: ${NAVER_ID}
+  password: ${NAVER_PASSWORD}
+
+jwt:
+  access:
+    expiration: 1800000
+  password:
+    expiration: 300000
 ---
 #local
 spring:
@@ -30,7 +39,12 @@ h2:
 server:
   port: 8081
 jwt:
-  secret-key: ${JWT_TOKEN_SECRET_KEY_LOCAL}
+  access:
+    secret:
+      key: ${JWT_TOKEN_ACCESS_SECRET_KEY_LOCAL}
+  password:
+    secret:
+      key: ${JWT_TOKEN_PASSWORD_SECRET_KEY_LOCAL}
 
 logging:
   level:
@@ -45,3 +59,11 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  access:
+    secret:
+      key: ${JWT_TOKEN_ACCESS_SECRET_KEY_DEV}
+  password:
+    secret:
+      key: ${JWT_TOKEN_PASSWORD_SECRET_KEY_DEV}

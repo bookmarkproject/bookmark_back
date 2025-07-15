@@ -1,6 +1,5 @@
 package com.example.bookmarkback;
 
-import com.example.bookmarkback.global.exception.BadRequestException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
