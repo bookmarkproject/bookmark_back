@@ -3,17 +3,23 @@ package com.example.bookmarkback.auth.service;
 import com.example.bookmarkback.auth.dto.ChangePasswordRequest;
 import com.example.bookmarkback.auth.dto.FindEmailRequest;
 import com.example.bookmarkback.auth.dto.LoginRequest;
+import com.example.bookmarkback.auth.dto.RefreshTokenRequest;
+import com.example.bookmarkback.auth.dto.RefreshTokenResponse;
 import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
+import com.example.bookmarkback.auth.entity.RefreshToken;
 import com.example.bookmarkback.auth.infra.JwtUtils;
 import com.example.bookmarkback.auth.infra.PasswordChangeJwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
+import com.example.bookmarkback.auth.repository.RefreshTokenRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
 import jakarta.validation.Valid;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,16 +35,19 @@ public class AuthService {
     private final EmailVerificationRepository emailVerificationRepository;
     private final JwtUtils jwtUtils;
     private final PasswordChangeJwtUtils passwordChangeJwtUtils;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
     public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder,
                        EmailVerificationRepository emailVerificationRepository,
-                       @Qualifier("loginJwtUtils") JwtUtils jwtUtils, PasswordChangeJwtUtils passwordChangeJwtUtils) {
+                       @Qualifier("loginJwtUtils") JwtUtils jwtUtils, PasswordChangeJwtUtils passwordChangeJwtUtils,
+                       RefreshTokenRepository refreshTokenRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailVerificationRepository = emailVerificationRepository;
         this.jwtUtils = jwtUtils;
         this.passwordChangeJwtUtils = passwordChangeJwtUtils;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Transactional
@@ -72,7 +81,15 @@ public class AuthService {
         }
 
         foundMember.setLastLoginAt(LocalDateTime.now());
-        return MemberResponse.response(foundMember, jwtUtils.createAccessToken(foundMember));
+        String refreshToken = generatedRefreshToken();
+        RefreshToken foundToken = refreshTokenRepository.findByMember(foundMember).orElse(null);
+        if (foundToken != null) {
+            foundToken.setToken(refreshToken);
+            foundToken.setExpiredAt(LocalDateTime.now().plusDays(14));
+        } else {
+            refreshTokenRepository.save(new RefreshToken(foundMember, refreshToken, LocalDateTime.now().plusDays(14)));
+        }
+        return MemberResponse.response(foundMember, jwtUtils.createAccessToken(foundMember), refreshToken);
     }
 
     @Transactional(readOnly = true)
@@ -99,6 +116,30 @@ public class AuthService {
     public Boolean checkNicknameDuplication(String nickname) {
         checkDuplicationNickname(nickname);
         return false;
+    }
+
+    @Transactional
+    public RefreshTokenResponse refreshToken(@Valid RefreshTokenRequest refreshTokenRequest) {
+        String refreshToken = refreshTokenRequest.refreshToken();
+        RefreshToken foundToken = refreshTokenRepository.findByToken(refreshToken).
+                orElseThrow(() -> new BadRequestException("RefreshToken이 존재하지 않습니다."));
+        if (foundToken.getExpiredAt().isBefore(LocalDateTime.now())) {
+            refreshTokenRepository.delete(foundToken);
+            throw new BadRequestException("유효하지 않은 토큰입니다.");
+        }
+
+        String newRefreshToken = generatedRefreshToken();
+        foundToken.setToken(newRefreshToken);
+        foundToken.setExpiredAt(LocalDateTime.now().plusDays(14));
+
+        return RefreshTokenResponse.response(jwtUtils.createAccessToken(foundToken.getMember()), newRefreshToken);
+    }
+
+    private String generatedRefreshToken() {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] bytes = new byte[32]; // 256비트
+        secureRandom.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
     private Long extractToken(String token) {

@@ -3,6 +3,7 @@ package com.example.bookmarkback.auth.infra;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.example.bookmarkback.auth.repository.RefreshTokenRepository;
 import com.example.bookmarkback.global.exception.UnauthorizedException;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
@@ -41,6 +42,9 @@ class JwtUtilsTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
+
     @Value(value = "${jwt.access.secret.key}")
     private String secretKey;
     @Value(value = "${application.name}")
@@ -50,6 +54,7 @@ class JwtUtilsTest {
 
     @AfterEach
     void tearDown() {
+        refreshTokenRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
 

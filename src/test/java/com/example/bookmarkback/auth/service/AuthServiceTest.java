@@ -10,6 +10,7 @@ import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
 import com.example.bookmarkback.auth.infra.PasswordChangeJwtUtils;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
+import com.example.bookmarkback.auth.repository.RefreshTokenRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
 import com.example.bookmarkback.member.dto.MemberResponse;
 import com.example.bookmarkback.member.entity.Member;
@@ -36,6 +37,9 @@ class AuthServiceTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
     private EmailVerificationRepository emailVerificationRepository;
 
     @Autowired
@@ -44,6 +48,7 @@ class AuthServiceTest {
     @AfterEach
     void tearDown() {
         emailVerificationRepository.deleteAllInBatch();
+        refreshTokenRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
 
