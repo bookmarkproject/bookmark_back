@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
+@Order(2)
+@Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
@@ -40,6 +44,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             Map<String, Object> memberData = jwtUtils.extractMemberIdAndRole(jwtToken);
             request.setAttribute(JwtUtils.JWT_MEMBER_ID_KEY, memberData.get(JwtUtils.JWT_MEMBER_ID_KEY));
             request.setAttribute(JwtUtils.JWT_ROLE_KEY, memberData.get(JwtUtils.JWT_ROLE_KEY));
+            log.info("[요청 멤버 ID] : {}", request.getAttribute(JwtUtils.JWT_MEMBER_ID_KEY));
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
