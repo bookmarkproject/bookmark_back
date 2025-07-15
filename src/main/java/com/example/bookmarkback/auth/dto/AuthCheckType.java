@@ -1,7 +1,6 @@
 package com.example.bookmarkback.auth.dto;
 
 import com.example.bookmarkback.global.exception.BadRequestException;
-import com.example.bookmarkback.member.entity.Gender;
 import java.util.Arrays;
 
 public enum AuthCheckType {

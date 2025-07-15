@@ -1,6 +1,5 @@
 package com.example.bookmarkback.auth.dto;
 
-import com.example.bookmarkback.auth.validator.SignupValidator;
 import com.example.bookmarkback.member.entity.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
