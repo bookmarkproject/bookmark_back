@@ -37,7 +37,7 @@ public class AuthService {
     private final PasswordChangeJwtUtils passwordChangeJwtUtils;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final Long REFRESH_TOKEN_DURATION = 2L;
+    private static final Long REFRESH_TOKEN_DURATION = 14L;
 
     @Autowired
     public AuthService(MemberRepository memberRepository, PasswordEncoder passwordEncoder,
@@ -87,11 +87,11 @@ public class AuthService {
         RefreshToken foundToken = refreshTokenRepository.findByMember(foundMember).orElse(null);
         if (foundToken != null) {
             foundToken.setToken(refreshToken);
-            foundToken.setExpiredAt(LocalDateTime.now().plusMinutes(REFRESH_TOKEN_DURATION));
+            foundToken.setExpiredAt(LocalDateTime.now().plusDays(REFRESH_TOKEN_DURATION));
         } else {
             RefreshToken savedToken = refreshTokenRepository.save(
                     new RefreshToken(foundMember, refreshToken,
-                            LocalDateTime.now().plusMinutes(REFRESH_TOKEN_DURATION)));
+                            LocalDateTime.now().plusDays(REFRESH_TOKEN_DURATION)));
             log.info("리프레쉬 토큰 만료 시간: {}", savedToken.getExpiredAt());
         }
 
