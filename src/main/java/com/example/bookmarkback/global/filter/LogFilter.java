@@ -53,6 +53,9 @@ public class LogFilter extends OncePerRequestFilter {
 
             log.info("==============Response=================");
             log.info("[Response Status] : {} ", responseWrapper.getStatus());
+            if (responseWrapper.getStatus() >= 400) {
+                log.info("[ErrorMessage] : {}", responseBody);
+            }
             log.info("[Response Time] : {}ms", duration);
             log.info("==============Response=================");
 
