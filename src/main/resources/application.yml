@@ -56,6 +56,16 @@ spring:
   config:
     activate:
       on-profile: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DEV_MYSQL_URL}
+    username: ${DEV_MYSQL_USER_NAME}
+    password: ${DEV_MYSQL_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        ddl-auto: none
 
 server:
   port: 8080
