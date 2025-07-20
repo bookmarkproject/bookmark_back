@@ -5,9 +5,22 @@ spring:
   config:
     import: file:.env[.properties]
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_ID}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
 host:
-  email: ${NAVER_ID}
-  password: ${NAVER_PASSWORD}
+  email: ${EMAIL_ID}
+  password: ${EMAIL_PASSWORD}
 
 ---
 spring:
