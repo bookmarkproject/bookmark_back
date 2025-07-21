@@ -27,13 +27,7 @@ public class RefreshToken extends BaseEntity {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "refresh_token_seq_gen")
-    @SequenceGenerator(
-            name = "refresh_token_seq_gen",
-            sequenceName = "refresh_token_seq",
-            initialValue = 1,
-            allocationSize = 50
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne

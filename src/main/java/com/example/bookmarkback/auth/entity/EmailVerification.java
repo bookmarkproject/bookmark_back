@@ -34,7 +34,7 @@ public class EmailVerification extends BaseEntity {
     public void setVerifiedAt(LocalDateTime verifiedAt) {
         this.verifiedAt = verifiedAt;
     }
-    
+
     public void setCode(String code) {
         this.code = code;
     }
@@ -44,13 +44,7 @@ public class EmailVerification extends BaseEntity {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_verification_seq_gen")
-    @SequenceGenerator(
-            name = "email_verification_seq_gen",
-            sequenceName = "email_verification_seq",
-            initialValue = 1,
-            allocationSize = 50
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)

@@ -35,13 +35,7 @@ public class Member extends BaseEntity {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_gen")
-    @SequenceGenerator(
-            name = "member_seq_gen",
-            sequenceName = "member_seq",
-            initialValue = 1,
-            allocationSize = 50
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, updatable = false, nullable = false)
