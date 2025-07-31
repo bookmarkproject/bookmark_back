@@ -17,7 +17,7 @@ public class BookService {
 
     private final AladdinApiService aladdinApiService;
 
-    public List<BookResponse> getLatestBooks() {
+    public List<BookResponse> getLatestBooks() throws Exception {
         log.info("최신 책 가져오기 서비스 로직 진입");
         Map<String, Object> additionalParameters = new HashMap<>();
         additionalParameters.put("querytype", "ItemNewSpecial");
@@ -25,7 +25,7 @@ public class BookService {
         return getBookListByAladin(additionalParameters);
     }
 
-    public List<BookResponse> getBestSellers() {
+    public List<BookResponse> getBestSellers() throws Exception {
         log.info("베스트셀러 가져오기 서비스 로직 진입");
 
         Map<String, Object> additionalParameters = new HashMap<>();
@@ -34,10 +34,14 @@ public class BookService {
         return getBookListByAladin(additionalParameters);
     }
 
-    private List<BookResponse> getBookListByAladin(Map<String, Object> parameters) {
+    private List<BookResponse> getBookListByAladin(Map<String, Object> parameters) throws Exception {
         List<BookResponse> result = new ArrayList<>();
-        Map<String, Object> bookDatas = aladdinApiService.getBookList(parameters);
-        List<Map<String, Object>> bookList = (List<Map<String, Object>>) bookDatas.get("item");
+        Map<String, Object> response = aladdinApiService.getBookList(parameters);
+        log.info("API 결과 : {}", response);
+        if (response.containsKey("errorCode")) {
+            throw new Exception();
+        }
+        List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
         for (Map<String, Object> book : bookList) {
             log.info("가져온 첵 정보 : {}", BookResponse.response(book).toString());
             result.add(BookResponse.response(book));

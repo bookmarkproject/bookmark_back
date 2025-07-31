@@ -18,13 +18,13 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/latest")
-    public ResponseEntity<List<BookResponse>> getLatestBooks() {
+    public ResponseEntity<List<BookResponse>> getLatestBooks() throws Exception {
         List<BookResponse> bookResponses = bookService.getLatestBooks();
         return ResponseEntity.ok(bookResponses);
     }
 
     @GetMapping("/bestseller")
-    public ResponseEntity<List<BookResponse>> getBestSeller() {
+    public ResponseEntity<List<BookResponse>> getBestSeller() throws Exception {
         List<BookResponse> bookResponses = bookService.getBestSellers();
         return ResponseEntity.ok(bookResponses);
     }
