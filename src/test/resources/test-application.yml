@@ -22,6 +22,9 @@ host:
   email: ${EMAIL_ID}
   password: ${EMAIL_PASSWORD}
 
+aladin:
+  key: ${ALADIN_API_KEY}
+
 ---
 spring:
   config:
