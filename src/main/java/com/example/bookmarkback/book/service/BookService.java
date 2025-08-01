@@ -44,6 +44,7 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public BookResponse getBookById(Long id) {
+        log.info("책 id로 책 가져오기 서비스 로직 진입");
         return BookResponse.response(bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 id에 대한 책 정보가 존재하지 않습니다.")));
     }

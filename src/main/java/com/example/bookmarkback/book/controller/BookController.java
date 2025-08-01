@@ -3,7 +3,6 @@ package com.example.bookmarkback.book.controller;
 import com.example.bookmarkback.book.dto.BookResponse;
 import com.example.bookmarkback.book.service.BookService;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
