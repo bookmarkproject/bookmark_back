@@ -28,7 +28,7 @@ public class BookRecord extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
-    private Member book;
+    private Book book;
 
     @Column(nullable = false)
     private Long page;
