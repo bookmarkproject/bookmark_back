@@ -13,6 +13,22 @@ import lombok.Getter;
 @Getter
 public class Book extends BaseEntity {
 
+    public Book() {
+    }
+
+    public Book(String title, String author, String publisher, LocalDate publishDate, String contents, Long page,
+                String imageUrl, String isbn, Double rating) {
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.publishDate = publishDate;
+        this.contents = contents;
+        this.page = page;
+        this.imageUrl = imageUrl;
+        this.isbn = isbn;
+        this.rating = rating;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -17,6 +18,7 @@ public class BookService {
 
     private final AladdinApiService aladdinApiService;
 
+    @Transactional(readOnly = true)
     public List<BookResponse> getLatestBooks() throws Exception {
         log.info("최신 책 가져오기 서비스 로직 진입");
         Map<String, Object> additionalParameters = new HashMap<>();
@@ -25,6 +27,7 @@ public class BookService {
         return getBookListByAladin(additionalParameters);
     }
 
+    @Transactional(readOnly = true)
     public List<BookResponse> getBestSellers() throws Exception {
         log.info("베스트셀러 가져오기 서비스 로직 진입");
 

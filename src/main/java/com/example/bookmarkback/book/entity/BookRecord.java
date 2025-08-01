@@ -18,6 +18,17 @@ import lombok.Getter;
 @Getter
 public class BookRecord extends BaseEntity {
 
+    public BookRecord() {
+    }
+
+    public BookRecord(Member member, Book book, Long page, Long readingTime, RecordStatus status) {
+        this.member = member;
+        this.book = book;
+        this.page = page;
+        this.readingTime = readingTime;
+        this.status = status;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
