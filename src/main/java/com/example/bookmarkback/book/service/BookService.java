@@ -1,6 +1,9 @@
 package com.example.bookmarkback.book.service;
 
 import com.example.bookmarkback.book.dto.BookResponse;
+import com.example.bookmarkback.book.entity.Book;
+import com.example.bookmarkback.book.repository.BookRepository;
+import com.example.bookmarkback.global.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookService {
 
     private final AladdinApiService aladdinApiService;
+
+    private final BookRepository bookRepository;
 
     @Transactional(readOnly = true)
     public List<BookResponse> getLatestBooks() throws Exception {
@@ -35,6 +40,12 @@ public class BookService {
         additionalParameters.put("querytype", "BestSeller");
 
         return getBookListByAladin(additionalParameters);
+    }
+
+    @Transactional(readOnly = true)
+    public BookResponse getBookById(Long id) {
+        return BookResponse.response(bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 id에 대한 책 정보가 존재하지 않습니다.")));
     }
 
     private List<BookResponse> getBookListByAladin(Map<String, Object> parameters) throws Exception {
