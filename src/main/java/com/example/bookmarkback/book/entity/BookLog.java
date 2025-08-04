@@ -16,6 +16,17 @@ import lombok.Getter;
 @Getter
 public class BookLog extends BaseEntity {
 
+    public BookLog() {
+    }
+
+    public BookLog(BookRecord bookRecord, Long pageStart, Long pageEnd, LocalDate readingDate, Long readingTime) {
+        this.bookRecord = bookRecord;
+        this.pageStart = pageStart;
+        this.pageEnd = pageEnd;
+        this.readingDate = readingDate;
+        this.readingTime = readingTime;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
