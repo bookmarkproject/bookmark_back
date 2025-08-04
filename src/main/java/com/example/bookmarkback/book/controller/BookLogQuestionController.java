@@ -1,7 +1,6 @@
 package com.example.bookmarkback.book.controller;
 
 import com.example.bookmarkback.book.dto.BookLogQuestionResponse;
-import com.example.bookmarkback.book.entity.BookLogQuestion;
 import com.example.bookmarkback.book.service.BookLogQuestionService;
 import com.example.bookmarkback.global.dto.MemberAuth;
 import java.util.List;

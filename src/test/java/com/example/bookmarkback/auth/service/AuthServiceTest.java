@@ -1,6 +1,5 @@
 package com.example.bookmarkback.auth.service;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -313,7 +312,7 @@ class AuthServiceTest {
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("RefreshToken이 존재하지 않습니다.");
     }
-    
+
     private SignupRequest getTestSignupRequest(String email, String nickname) {
         return SignupRequest.builder()
                 .email(email)

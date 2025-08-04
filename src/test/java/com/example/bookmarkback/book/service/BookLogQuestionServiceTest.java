@@ -2,10 +2,8 @@ package com.example.bookmarkback.book.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.bookmarkback.book.dto.BookLogQuestionResponse;
-import com.example.bookmarkback.book.dto.BookLogResponse;
 import com.example.bookmarkback.book.entity.Book;
 import com.example.bookmarkback.book.entity.BookLog;
 import com.example.bookmarkback.book.entity.BookLogQuestion;

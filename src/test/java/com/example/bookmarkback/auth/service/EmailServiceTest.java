@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.bookmarkback.auth.dto.EmailRequest;
 import com.example.bookmarkback.auth.dto.EmailResponse;
-import com.example.bookmarkback.auth.dto.SignupRequest;
 import com.example.bookmarkback.auth.entity.EmailVerification;
 import com.example.bookmarkback.auth.repository.EmailVerificationRepository;
 import com.example.bookmarkback.global.exception.BadRequestException;
@@ -16,9 +15,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;

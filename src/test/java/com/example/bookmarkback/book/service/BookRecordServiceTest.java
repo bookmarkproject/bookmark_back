@@ -1,6 +1,6 @@
 package com.example.bookmarkback.book.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.bookmarkback.book.dto.BookRecordResponse;
 import com.example.bookmarkback.book.entity.Book;
@@ -14,7 +14,6 @@ import com.example.bookmarkback.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
