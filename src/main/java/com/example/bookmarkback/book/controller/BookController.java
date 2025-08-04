@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,6 +27,12 @@ public class BookController {
     @GetMapping("/bestseller")
     public ResponseEntity<List<BookResponse>> getBestSeller() throws Exception {
         List<BookResponse> bookResponses = bookService.getBestSellers();
+        return ResponseEntity.ok(bookResponses);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BookResponse>> searchBooks(@RequestParam("query") String query) throws Exception {
+        List<BookResponse> bookResponses = bookService.searchBooks(query);
         return ResponseEntity.ok(bookResponses);
     }
 

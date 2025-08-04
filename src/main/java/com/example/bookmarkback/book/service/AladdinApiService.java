@@ -1,5 +1,6 @@
 package com.example.bookmarkback.book.service;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,28 @@ public class AladdinApiService {
                 .uri(requestUrl)
                 .retrieve()
                 .body(Map.class);
+    }
 
+    public Map<String, Object> getBookByQuery(Map<String, Object> parameters) {
+        Map<String, Object> baseParameter = getBaseParameter();
+        baseParameter.putAll(parameters);
+
+        String baseUrl = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?";
+        StringJoiner sj = new StringJoiner("&");
+        for (Map.Entry<String, Object> param : baseParameter.entrySet()) {
+            sj.add(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8).replace("+", "%20") + "=" +
+                    URLEncoder.encode(String.valueOf(param.getValue()), StandardCharsets.UTF_8).replace("+", "%20"));
+        }
+        String url = baseUrl + sj.toString();
+
+        URI requestUrl = URI.create(url);
+
+        log.info("요청 URL : {}", requestUrl);
+
+        return restClient.get()
+                .uri(requestUrl)
+                .retrieve()
+                .body(Map.class);
     }
 
     private Map<String, Object> getBaseParameter() {
