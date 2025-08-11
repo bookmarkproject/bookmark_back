@@ -1,7 +1,9 @@
 package com.example.bookmarkback.book.service;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.example.bookmarkback.book.dto.BookRecordRequest;
 import com.example.bookmarkback.book.dto.BookRecordResponse;
 import com.example.bookmarkback.book.entity.Book;
 import com.example.bookmarkback.book.entity.BookRecord;
@@ -89,6 +91,31 @@ class BookRecordServiceTest {
         List<BookRecordResponse> myBookRecord = bookRecordService.getMyBookRecord(new MemberAuth(member1.getId()));
 
         assertThat(myBookRecord.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("독서 기록을 생성할 수 있다.")
+    void saveBookRecordTest() throws Exception {
+        Member member1 = getTestMember("kkk@gmail.com", "코코");
+        memberRepository.save(member1);
+        BookRecordRequest request = BookRecordRequest.builder()
+                .title("혼모노")
+                .author("성해나 (지은이)")
+                .contents("하하하")
+                .imageUrl("sss")
+                .publisher("생능")
+                .publishDate(LocalDate.of(2021, 2, 3))
+                .isbn("9788936439743")
+                .build();
+
+        BookRecordResponse bookRecordResponse = bookRecordService.saveBookRecord(request,
+                new MemberAuth(member1.getId()));
+
+        assertThat(bookRecordResponse.page()).isEqualTo(0L);
+        assertThat(bookRecordResponse.bookResponse().title()).isEqualTo("혼모노");
+        assertThat(bookRecordResponse.bookResponse().contents()).isEqualTo("하하하");
+        assertThat(bookRecordResponse.bookResponse().page()).isEqualTo(368L);
+        assertThat(bookRecordResponse.bookResponse().rating()).isEqualTo(9.0D);
     }
 
     private Member getTestMember(String email, String nickname) {

@@ -116,13 +116,15 @@ public class BookService {
     private Long extractPage(Map<String, Object> response) {
         List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
         Map<String, Object> subInfo = (Map<String, Object>) bookList.get(0).get("subInfo");
-        return (Long) subInfo.get("itemPage");
+        Integer page = (Integer) subInfo.get("itemPage");
+        return page.longValue();
     }
 
     private Double extractRating(Map<String, Object> response) {
         List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
         Map<String, Object> subInfo = (Map<String, Object>) bookList.get(0).get("subInfo");
         Map<String, Object> ratingInfo = (Map<String, Object>) subInfo.get("ratingInfo");
-        return (Double) ratingInfo.get("ratingScore");
+        Integer ratingScore = (Integer) ratingInfo.get("ratingScore");
+        return ratingScore.doubleValue();
     }
 }
