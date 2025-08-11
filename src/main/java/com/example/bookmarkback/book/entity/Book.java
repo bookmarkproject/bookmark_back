@@ -16,6 +16,14 @@ public class Book extends BaseEntity {
     public Book() {
     }
 
+    public void setPage(Long page) {
+        this.page = page;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
     public Book(String title, String author, String publisher, LocalDate publishDate, String contents, Long page,
                 String imageUrl, String isbn, Double rating) {
         this.title = title;

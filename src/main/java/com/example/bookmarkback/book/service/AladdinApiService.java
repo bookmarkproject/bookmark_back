@@ -1,5 +1,6 @@
 package com.example.bookmarkback.book.service;
 
+import jakarta.validation.constraints.NotBlank;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -57,6 +58,26 @@ public class AladdinApiService {
         String url = baseUrl + sj.toString();
 
         URI requestUrl = URI.create(url);
+
+        log.info("요청 URL : {}", requestUrl);
+
+        return restClient.get()
+                .uri(requestUrl)
+                .retrieve()
+                .body(Map.class);
+    }
+
+    public Map<String, Object> getPageAndRating(Map<String, Object> parameters) {
+        Map<String, Object> baseParameter = getBaseParameter();
+        baseParameter.putAll(parameters);
+
+        String baseUrl = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?";
+        StringJoiner sj = new StringJoiner("&");
+        for (Map.Entry<String, Object> param : baseParameter.entrySet()) {
+            sj.add(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8) + "=" +
+                    URLEncoder.encode(String.valueOf(param.getValue()), StandardCharsets.UTF_8));
+        }
+        String requestUrl = baseUrl + sj.toString();
 
         log.info("요청 URL : {}", requestUrl);
 

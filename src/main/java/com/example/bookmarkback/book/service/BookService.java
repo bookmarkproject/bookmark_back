@@ -1,5 +1,6 @@
 package com.example.bookmarkback.book.service;
 
+import com.example.bookmarkback.book.dto.BookRecordRequest;
 import com.example.bookmarkback.book.dto.BookResponse;
 import com.example.bookmarkback.book.entity.Book;
 import com.example.bookmarkback.book.repository.BookRepository;
@@ -91,4 +92,37 @@ public class BookService {
         return result;
     }
 
+    public Book saveBook(BookRecordRequest bookRecordRequest) throws Exception {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("itemIdType", "ISBN13");
+        parameters.put("optResult", "ratinginfo");
+        parameters.put("itemId", bookRecordRequest.isbn());
+        Map<String, Object> response = aladdinApiService.getPageAndRating(parameters);
+        log.info("API 결과 : {}", response);
+        if (response.containsKey("errorCode")) {
+            throw new Exception();
+        }
+        Long page = extractPage(response);
+        Double rating = extractRating(response);
+        Book book = bookRecordRequest.toBook();
+        book.setPage(page);
+        book.setRating(rating);
+
+        bookRepository.save(book);
+
+        return book;
+    }
+
+    private Long extractPage(Map<String, Object> response) {
+        List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
+        Map<String, Object> subInfo = (Map<String, Object>) bookList.get(0).get("subInfo");
+        return (Long) subInfo.get("itemPage");
+    }
+
+    private Double extractRating(Map<String, Object> response) {
+        List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
+        Map<String, Object> subInfo = (Map<String, Object>) bookList.get(0).get("subInfo");
+        Map<String, Object> ratingInfo = (Map<String, Object>) subInfo.get("ratingInfo");
+        return (Double) ratingInfo.get("ratingScore");
+    }
 }

@@ -1,10 +1,16 @@
 package com.example.bookmarkback.book.service;
 
+import com.example.bookmarkback.book.dto.BookRecordRequest;
 import com.example.bookmarkback.book.dto.BookRecordResponse;
 import com.example.bookmarkback.book.dto.BookResponse;
+import com.example.bookmarkback.book.entity.Book;
 import com.example.bookmarkback.book.entity.BookRecord;
 import com.example.bookmarkback.book.repository.BookRecordRepository;
 import com.example.bookmarkback.global.dto.MemberAuth;
+import com.example.bookmarkback.global.exception.ResourceNotFoundException;
+import com.example.bookmarkback.member.entity.Member;
+import com.example.bookmarkback.member.repository.MemberRepository;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class BookRecordService {
 
+    private final MemberRepository memberRepository;
     private final BookRecordRepository bookRecordRepository;
+    private final BookService bookService;
 
     @Transactional(readOnly = true)
     public List<BookRecordResponse> getMyBookRecord(MemberAuth memberAuth) {
@@ -31,5 +39,16 @@ public class BookRecordService {
         }
 
         return bookRecordResponses;
+    }
+
+    @Transactional
+    public BookRecordResponse saveBookRecord(BookRecordRequest bookRecordRequest, MemberAuth memberAuth)
+            throws Exception {
+        Member member = memberRepository.findById(memberAuth.memberId())
+                .orElseThrow(() -> new ResourceNotFoundException("멤버 정보가 존재하지 않습니다."));
+        Book book = bookService.saveBook(bookRecordRequest);
+        BookRecord bookRecord = bookRecordRequest.toBookRecord(member, book);
+        bookRecordRepository.save(bookRecord);
+        return BookRecordResponse.response(BookResponse.response(book), bookRecord);
     }
 }
