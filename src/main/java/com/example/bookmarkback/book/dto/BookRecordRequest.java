@@ -7,11 +7,11 @@ import com.example.bookmarkback.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.Builder;
 
 @Builder
-@JsonInclude(Include.NON_NULL)
 public record BookRecordRequest(
         @NotBlank(message = "isbn은 필수 항목입니다.")
         String isbn,
@@ -25,7 +25,7 @@ public record BookRecordRequest(
 
         @NotBlank(message = "출판사는 필수 항목입니다.")
         String publisher,
-        @NotBlank(message = "출판일은 필수 항목입니다.")
+        @NotNull(message = "출판일은 필수 항목입니다.")
         LocalDate publishDate
 ) {
 

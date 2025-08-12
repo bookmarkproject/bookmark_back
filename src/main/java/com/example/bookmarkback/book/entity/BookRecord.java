@@ -29,6 +29,18 @@ public class BookRecord extends BaseEntity {
         this.status = status;
     }
 
+    public void setStatus(RecordStatus status) {
+        this.status = status;
+    }
+
+    public void setPage(Long page) {
+        this.page = page;
+    }
+
+    public void setReadingTime(Long readingTime) {
+        this.readingTime = readingTime;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
