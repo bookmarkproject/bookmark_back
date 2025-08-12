@@ -1,5 +1,6 @@
 package com.example.bookmarkback.book.dto;
 
+import com.example.bookmarkback.book.entity.Book;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDate;
 import java.util.Map;
@@ -28,6 +29,21 @@ public record BookResponse(
                 .imageUrl(book.get("cover").toString())
                 .publisher(book.get("publisher").toString())
                 .publishDate(LocalDate.parse(book.get("pubDate").toString()))
+                .build();
+    }
+
+    public static BookResponse response(Book book) {
+        return BookResponse.builder()
+                .id(book.getId())
+                .isbn(book.getIsbn())
+                .title(book.getTitle())
+                .contents(book.getContents())
+                .author(book.getAuthor())
+                .rating(book.getRating())
+                .page(book.getPage())
+                .imageUrl(book.getImageUrl())
+                .publisher(book.getPublisher())
+                .publishDate(book.getPublishDate())
                 .build();
     }
 }

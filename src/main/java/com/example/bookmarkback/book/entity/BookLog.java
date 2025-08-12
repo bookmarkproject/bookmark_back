@@ -11,10 +11,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import lombok.Getter;
+import lombok.ToString;
 
 @Entity
 @Getter
+@ToString
 public class BookLog extends BaseEntity {
+
+    public BookLog() {
+    }
+
+    public BookLog(BookRecord bookRecord, Long pageStart, Long pageEnd, LocalDate readingDate, Long readingTime) {
+        this.bookRecord = bookRecord;
+        this.pageStart = pageStart;
+        this.pageEnd = pageEnd;
+        this.readingDate = readingDate;
+        this.readingTime = readingTime;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

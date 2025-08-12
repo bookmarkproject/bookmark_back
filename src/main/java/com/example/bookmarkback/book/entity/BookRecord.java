@@ -13,10 +13,35 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import lombok.ToString;
 
 @Entity
 @Getter
+@ToString
 public class BookRecord extends BaseEntity {
+
+    public BookRecord() {
+    }
+
+    public BookRecord(Member member, Book book, Long page, Long readingTime, RecordStatus status) {
+        this.member = member;
+        this.book = book;
+        this.page = page;
+        this.readingTime = readingTime;
+        this.status = status;
+    }
+
+    public void setStatus(RecordStatus status) {
+        this.status = status;
+    }
+
+    public void setPage(Long page) {
+        this.page = page;
+    }
+
+    public void setReadingTime(Long readingTime) {
+        this.readingTime = readingTime;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +53,7 @@ public class BookRecord extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
-    private Member book;
+    private Book book;
 
     @Column(nullable = false)
     private Long page;

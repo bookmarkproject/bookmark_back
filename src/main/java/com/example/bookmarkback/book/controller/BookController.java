@@ -3,11 +3,12 @@ package com.example.bookmarkback.book.controller;
 import com.example.bookmarkback.book.dto.BookResponse;
 import com.example.bookmarkback.book.service.BookService;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,5 +28,17 @@ public class BookController {
     public ResponseEntity<List<BookResponse>> getBestSeller() throws Exception {
         List<BookResponse> bookResponses = bookService.getBestSellers();
         return ResponseEntity.ok(bookResponses);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BookResponse>> searchBooks(@RequestParam("query") String query) throws Exception {
+        List<BookResponse> bookResponses = bookService.searchBooks(query);
+        return ResponseEntity.ok(bookResponses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookResponse> getBookById(@PathVariable Long id) {
+        BookResponse bookResponse = bookService.getBookById(id);
+        return ResponseEntity.ok(bookResponse);
     }
 }

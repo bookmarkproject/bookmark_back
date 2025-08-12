@@ -8,10 +8,36 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDate;
 import lombok.Getter;
+import lombok.ToString;
 
 @Entity
 @Getter
+@ToString
 public class Book extends BaseEntity {
+
+    public Book() {
+    }
+
+    public void setPage(Long page) {
+        this.page = page;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public Book(String title, String author, String publisher, LocalDate publishDate, String contents, Long page,
+                String imageUrl, String isbn, Double rating) {
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.publishDate = publishDate;
+        this.contents = contents;
+        this.page = page;
+        this.imageUrl = imageUrl;
+        this.isbn = isbn;
+        this.rating = rating;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
