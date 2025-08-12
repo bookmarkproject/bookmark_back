@@ -15,16 +15,20 @@ import lombok.Builder;
 public record BookRecordRequest(
         @NotBlank(message = "isbn은 필수 항목입니다.")
         String isbn,
+
         @NotBlank(message = "제목은 필수 항목입니다.")
         String title,
+
         @NotBlank(message = "저자는 필수 항목입니다.")
         String author,
 
-        String contents,
-        String imageUrl,
+        String contents,   // 선택적
+
+        String imageUrl,   // 선택적
 
         @NotBlank(message = "출판사는 필수 항목입니다.")
         String publisher,
+
         @NotNull(message = "출판일은 필수 항목입니다.")
         LocalDate publishDate
 ) {
