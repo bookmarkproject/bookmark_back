@@ -44,11 +44,14 @@ public class BookRecordService {
     @Transactional
     public BookRecordResponse saveBookRecord(BookRecordRequest bookRecordRequest, MemberAuth memberAuth)
             throws Exception {
+        log.info("독서 기록하기 서비스 계층 진입");
         Member member = memberRepository.findById(memberAuth.memberId())
                 .orElseThrow(() -> new ResourceNotFoundException("멤버 정보가 존재하지 않습니다."));
         Book book = bookService.saveBook(bookRecordRequest);
+        log.info("저장된 도서 정보 : {}", book);
         BookRecord bookRecord = bookRecordRequest.toBookRecord(member, book);
         bookRecordRepository.save(bookRecord);
+        log.info("저장된 독서 기록 정보 : {}", bookRecord);
         return BookRecordResponse.response(BookResponse.response(book), bookRecord);
     }
 }
