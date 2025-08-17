@@ -124,7 +124,10 @@ public class BookService {
         List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
         Map<String, Object> subInfo = (Map<String, Object>) bookList.get(0).get("subInfo");
         Map<String, Object> ratingInfo = (Map<String, Object>) subInfo.get("ratingInfo");
-        Integer ratingScore = (Integer) ratingInfo.get("ratingScore");
-        return ratingScore.doubleValue();
+        Object ratingScore = ratingInfo.get("ratingScore");
+        if (ratingScore instanceof Number number) {
+            return number.doubleValue();
+        }
+        return null;
     }
 }
