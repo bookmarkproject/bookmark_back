@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -33,6 +34,13 @@ public class BookRecordController {
         BookRecordResponse responseBody = bookRecordService.getRecordById(id, memberAuth);
         return ResponseEntity.ok(responseBody);
     }
+
+    @GetMapping("/recording")
+    public ResponseEntity<Boolean> isRecordingBook(@RequestParam String isbn, MemberAuth memberAuth) {
+        Boolean response = bookRecordService.isRecordingBook(isbn, memberAuth);
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping
     public ResponseEntity<BookRecordResponse> saveBookRecord(@Valid @RequestBody BookRecordRequest bookRecordRequest,

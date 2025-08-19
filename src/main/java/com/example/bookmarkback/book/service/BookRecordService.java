@@ -64,6 +64,14 @@ public class BookRecordService {
         return BookRecordResponse.response(BookResponse.response(record.getBook()), record);
     }
 
+    @Transactional(readOnly = true)
+    public Boolean isRecordingBook(String isbn, MemberAuth memberAuth) {
+        if (isbn.isBlank()) {
+            return false;
+        }
+        return bookRecordRepository.existsByBook_IsbnAndMember_Id(isbn, memberAuth.memberId());
+    }
+
     private void validateMember(Long authorId, Long memberId) {
         if (!authorId.equals(memberId)) {
             throw new ForbiddenException("다른 사용자의 기록에 접근할 수 없습니다.");
