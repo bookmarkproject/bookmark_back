@@ -9,6 +9,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,12 @@ public class BookRecordController {
     @GetMapping("/me")
     public ResponseEntity<List<BookRecordResponse>> getMyBookRecord(MemberAuth memberAuth) {
         List<BookRecordResponse> responseBody = bookRecordService.getMyBookRecord(memberAuth);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookRecordResponse> getRecordById(@PathVariable Long id, MemberAuth memberAuth) {
+        BookRecordResponse responseBody = bookRecordService.getRecordById(id, memberAuth);
         return ResponseEntity.ok(responseBody);
     }
 

@@ -7,6 +7,7 @@ import com.example.bookmarkback.book.entity.Book;
 import com.example.bookmarkback.book.entity.BookRecord;
 import com.example.bookmarkback.book.repository.BookRecordRepository;
 import com.example.bookmarkback.global.dto.MemberAuth;
+import com.example.bookmarkback.global.exception.ForbiddenException;
 import com.example.bookmarkback.global.exception.ResourceNotFoundException;
 import com.example.bookmarkback.member.entity.Member;
 import com.example.bookmarkback.member.repository.MemberRepository;
@@ -53,5 +54,19 @@ public class BookRecordService {
         bookRecordRepository.save(bookRecord);
         log.info("저장된 독서 기록 정보 : {}", bookRecord);
         return BookRecordResponse.response(BookResponse.response(book), bookRecord);
+    }
+
+    @Transactional(readOnly = true)
+    public BookRecordResponse getRecordById(Long id, MemberAuth memberAuth) {
+        BookRecord record = bookRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("기록이 존재하지 않습니다."));
+        validateMember(record.getMember().getId(), memberAuth.memberId());
+        return BookRecordResponse.response(BookResponse.response(record.getBook()), record);
+    }
+
+    private void validateMember(Long authorId, Long memberId) {
+        if (!authorId.equals(memberId)) {
+            throw new ForbiddenException("다른 사용자의 기록에 접근할 수 없습니다.");
+        }
     }
 }
