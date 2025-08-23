@@ -19,7 +19,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Member member = new Member("ocdee39@gmail.com", passwordEncoder.encode("abc123!@#"), "이세영", "끠끼", "남자",
+        Member member = new Member("ocdee39@gmail.com", passwordEncoder.encode("abc123!@#"), "이세영", "제로영", "남자",
                 "01012345678",
                 LocalDate.of(1967, 12, 21), null, null);
         memberRepository.save(member);
