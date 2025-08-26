@@ -1,0 +1,67 @@
+application:
+  name: Bookmark
+
+spring:
+  config:
+    import: file:.env[.properties]
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_ID}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+host:
+  email: ${EMAIL_ID}
+  password: ${EMAIL_PASSWORD}
+
+aladin:
+  key: ${ALADIN_API_KEY}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:bookmark
+    username: sa
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: create-drop
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+server:
+  port: 8082
+jwt:
+  access:
+    expiration: 1800000
+    secret:
+      key: test_key_test_key_test_key_test_key_test_key_test_key_test_key_test_key
+  password:
+    expiration: 300000
+    secret:
+      key: password_key_password_key_password_key_password_key_password_key_password_key
+
+testing:
+  email: ${TEST_EMAIL}

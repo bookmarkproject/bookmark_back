@@ -3,8 +3,49 @@ spring:
   config:
     import: file:.env[.properties]
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_ID}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
 application:
   name: Bookmark
+
+host:
+  email: ${EMAIL_ID}
+  password: ${EMAIL_PASSWORD}
+
+aladin:
+  key: ${ALADIN_API_KEY}
+
+jwt:
+  access:
+    expiration: 1800000
+  password:
+    expiration: 300000
+
+cloud:
+  aws:
+    s3:
+      bucket: ${BUCKET_NAME}
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: ${ACCESS_KEY_ID}
+      secret-key: ${SECRET_ACCESS_KEY}
 
 ---
 #local
@@ -30,7 +71,12 @@ h2:
 server:
   port: 8081
 jwt:
-  secret-key: ${JWT_TOKEN_SECRET_KEY_LOCAL}
+  access:
+    secret:
+      key: ${JWT_TOKEN_ACCESS_SECRET_KEY_LOCAL}
+  password:
+    secret:
+      key: ${JWT_TOKEN_PASSWORD_SECRET_KEY_LOCAL}
 
 logging:
   level:
@@ -42,6 +88,24 @@ spring:
   config:
     activate:
       on-profile: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DEV_MYSQL_URL}
+    username: ${DEV_MYSQL_USER_NAME}
+    password: ${DEV_MYSQL_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        ddl-auto: create
 
 server:
   port: 8080
+
+jwt:
+  access:
+    secret:
+      key: ${JWT_TOKEN_ACCESS_SECRET_KEY_DEV}
+  password:
+    secret:
+      key: ${JWT_TOKEN_PASSWORD_SECRET_KEY_DEV}
