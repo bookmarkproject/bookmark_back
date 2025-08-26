@@ -16,6 +16,11 @@ spring:
           starttls:
             enable: true
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
 application:
   name: Bookmark
 
@@ -31,6 +36,17 @@ jwt:
     expiration: 1800000
   password:
     expiration: 300000
+
+cloud:
+  aws:
+    s3:
+      bucket: ${BUCKET_NAME}
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: ${ACCESS_KEY_ID}
+      secret-key: ${SECRET_ACCESS_KEY}
+
 ---
 #local
 spring:
