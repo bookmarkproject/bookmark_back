@@ -1,5 +1,6 @@
 package com.example.bookmarkback.book.controller;
 
+import com.example.bookmarkback.book.dto.BookLogOverRequest;
 import com.example.bookmarkback.book.dto.BookLogRequest;
 import com.example.bookmarkback.book.dto.BookLogResponse;
 import com.example.bookmarkback.book.entity.BookLog;
@@ -34,6 +35,12 @@ public class BookLogController {
     public ResponseEntity<BookLogResponse> saveBookLog(@Valid @RequestBody BookLogRequest bookLogRequest,
                                                        MemberAuth memberAuth) {
         BookLogResponse response = bookLogService.saveBookLog(bookLogRequest, memberAuth);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/over")
+    public ResponseEntity<BookLogResponse> saveOverBookLog(@Valid @RequestBody BookLogOverRequest bookLogOverRequest) {
+        BookLogResponse response = bookLogService.saveOverBookLog(bookLogOverRequest);
         return ResponseEntity.ok(response);
     }
 }

@@ -13,22 +13,9 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record BookLogRequest(
+public record BookLogOverRequest(
         @NotNull(message = "독서 기록 id는 필수 항목입니다.")
         Long bookRecordId,
-
-        boolean isOver,
-
-        @NotNull(message = "시작 페이지는 필수 항목입니다.")
-        @Min(value = 0, message = "0 이상의 숫자만 입력하세요.")
-        Long pageStart,
-
-        @Min(value = 0, message = "0 이상의 숫자만 입력하세요.")
-        Long pageEnd,
-
-        @NotNull(message = "독서 시간은 필수 항목입니다.")
-        @Min(value = 0, message = "0 이상의 숫자만 입력하세요.")
-        Long readingTime,
 
         @NotEmpty(message = "기록 질문들은 필수 항목입니다.")
         List<@NotBlank(message = "질문 내용은 빈 문자열일 수 없습니다.") String> questions,
@@ -40,9 +27,6 @@ public record BookLogRequest(
         String logType
 ) {
     public BookLog toBookLog(BookRecord bookRecord) {
-        if (pageStart > pageEnd) {
-            throw new BadRequestException("시작 페이지는 끝 페이지를 넘을 수 없습니다.");
-        }
-        return new BookLog(bookRecord, pageStart, pageEnd, LocalDate.now(), readingTime, LogType.toEnum(logType));
+        return new BookLog(bookRecord, 0L, 1L, LocalDate.now(), 0L, LogType.toEnum(logType));
     }
 }

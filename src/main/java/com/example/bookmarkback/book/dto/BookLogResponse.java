@@ -12,7 +12,8 @@ public record BookLogResponse(
         Long pageStart,
         Long pageEnd,
         LocalDate readingDate,
-        Long readingTime
+        Long readingTime,
+        String logType
 ) {
     public static BookLogResponse response(BookLog bookLog) {
         return BookLogResponse.builder()
@@ -21,6 +22,7 @@ public record BookLogResponse(
                 .pageEnd(bookLog.getPageEnd())
                 .readingDate(bookLog.getReadingDate())
                 .readingTime(bookLog.getReadingTime())
+                .logType(bookLog.getLogType().getName())
                 .build();
     }
 }
