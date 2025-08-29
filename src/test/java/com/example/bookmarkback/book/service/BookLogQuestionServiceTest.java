@@ -8,6 +8,7 @@ import com.example.bookmarkback.book.entity.Book;
 import com.example.bookmarkback.book.entity.BookLog;
 import com.example.bookmarkback.book.entity.BookLogQuestion;
 import com.example.bookmarkback.book.entity.BookRecord;
+import com.example.bookmarkback.book.entity.LogType;
 import com.example.bookmarkback.book.entity.RecordStatus;
 import com.example.bookmarkback.book.repository.BookLogQuestionRepository;
 import com.example.bookmarkback.book.repository.BookLogRepository;
@@ -149,7 +150,7 @@ class BookLogQuestionServiceTest {
     }
 
     private BookLog getTestBookLog(BookRecord bookRecord) {
-        return new BookLog(bookRecord, 13L, 31L, LocalDate.of(2025, 7, 30), 31L);
+        return new BookLog(bookRecord, 13L, 31L, LocalDate.of(2025, 7, 30), 31L, LogType.Normal);
     }
 
     private BookLogQuestion getTestQuestion(BookLog bookLog) {
