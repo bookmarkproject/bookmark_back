@@ -10,6 +10,7 @@ public enum PublicEndpoint {
     MailPostEndpoint(HttpMethod.POST, "/mail/**"),
     AuthPostEndpoint(HttpMethod.POST, "/auth/**"),
     AuthGetEndpoint(HttpMethod.GET, "/auth/**"),
+    PrometheusGetEndPoint(HttpMethod.GET, "/actuator/prometheus"),
     TestPostEndpoint(HttpMethod.POST, "/test/**");
 
 
