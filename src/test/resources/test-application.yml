@@ -40,6 +40,10 @@ host:
 aladin:
   key: ${ALADIN_API_KEY}
 
+logging:
+  level:
+    org.springframework.mail: DEBUG
+
 ---
 spring:
   config:
@@ -68,6 +72,7 @@ logging:
 
 server:
   port: 8082
+
 jwt:
   access:
     expiration: 1800000
