@@ -69,7 +69,7 @@ h2:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
 server:
-  port: 8081
+  port: 8082
 jwt:
   access:
     secret:
@@ -100,7 +100,7 @@ spring:
         ddl-auto: create
 
 server:
-  port: 8080
+  port: 8081
 
 jwt:
   access:
@@ -109,3 +109,30 @@ jwt:
   password:
     secret:
       key: ${JWT_TOKEN_PASSWORD_SECRET_KEY_DEV}
+
+---
+##prod
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${PROD_MYSQL_URL}
+    username: ${PROD_MYSQL_USER_NAME}
+    password: ${PROD_MYSQL_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        ddl-auto: validate
+server:
+  port: 8080
+
+jwt:
+  access:
+    secret:
+      key: ${JWT_TOKEN_ACCESS_SECRET_KEY_PROD}
+  password:
+    secret:
+      key: ${JWT_TOKEN_PASSWORD_SECRET_KEY_PROD}
