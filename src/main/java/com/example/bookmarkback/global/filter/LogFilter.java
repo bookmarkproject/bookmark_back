@@ -35,6 +35,12 @@ public class LogFilter extends OncePerRequestFilter {
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
         try {
+            String reqId = request.getHeader("X-Request-ID");
+            if (reqId == null || reqId.isEmpty()) {
+                reqId = UUID.randomUUID().toString();
+            }
+            MDC.put("reqId", reqId);
+
             String url = request.getRequestURI();
             String queryString = request.getQueryString() != null ? "?" + request.getQueryString() : "";
             String method = request.getMethod();

@@ -46,13 +46,9 @@
                         <fieldName>stacktrace</fieldName>
                     </stackTrace>
                     <mdc>
-                        <fieldName>userId</fieldName>
-                        <key>userId</key>
+                        <fieldName>reqInfo</fieldName>
+                        <includeKeys>userId,reqId</includeKeys>
                     </mdc>
-                    <uuid>
-                        <fieldName>traceId</fieldName>
-                        <strategy>random</strategy>
-                    </uuid>
                 </providers>
             </encoder>
         </appender>
@@ -96,13 +92,9 @@
                         <fieldName>stacktrace</fieldName>
                     </stackTrace>
                     <mdc>
-                        <fieldName>userId</fieldName>
-                        <key>userId</key>
+                        <fieldName>reqInfo</fieldName>
+                        <includeKeys>userId,reqId</includeKeys>
                     </mdc>
-                    <uuid>
-                        <fieldName>traceId</fieldName>
-                        <strategy>random</strategy>
-                    </uuid>
                 </providers>
             </encoder>
         </appender>

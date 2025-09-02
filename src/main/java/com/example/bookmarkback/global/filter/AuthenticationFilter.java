@@ -46,7 +46,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             request.setAttribute(JwtUtils.JWT_MEMBER_ID_KEY, memberData.get(JwtUtils.JWT_MEMBER_ID_KEY));
             request.setAttribute(JwtUtils.JWT_ROLE_KEY, memberData.get(JwtUtils.JWT_ROLE_KEY));
             log.info("[요청 멤버 ID] : {}", request.getAttribute(JwtUtils.JWT_MEMBER_ID_KEY));
-            MDC.put("userId", String.valueOf(request.getAttribute(JwtUtils.JWT_MEMBER_ID_KEY)));
+            MDC.put("userId", request.getAttribute(JwtUtils.JWT_MEMBER_ID_KEY).toString());
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
