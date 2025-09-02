@@ -65,7 +65,6 @@ public class AuthService {
             deleteEmailVerification(savedMember.getEmail());
             return MemberResponse.response(savedMember);
         } catch (Exception e) {
-            log.error("서버 예외 발생");
             throw new Exception(e);
         }
     }

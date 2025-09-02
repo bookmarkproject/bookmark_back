@@ -60,11 +60,11 @@ public class LogFilter extends OncePerRequestFilter {
             String responseBody = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
 
             if (responseWrapper.getStatus() >= 400) {
-                log.error("==============Response=================");
+                log.error("==============Error Response=================");
                 log.error("[Response Status] : {} ", responseWrapper.getStatus());
                 log.error("[ErrorMessage] : {}", responseBody);
                 log.error("[Response Time] : {}ms", duration);
-                log.error("==============Response=================");
+                log.error("==============Error Response=================");
             } else {
                 log.info("==============Response=================");
                 log.info("[Response Status] : {} ", responseWrapper.getStatus());
