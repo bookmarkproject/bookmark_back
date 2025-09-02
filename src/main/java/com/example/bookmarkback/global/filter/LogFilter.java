@@ -59,21 +59,15 @@ public class LogFilter extends OncePerRequestFilter {
 
             String responseBody = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
 
+            log.info("==============Response=================");
+            log.info("[Response Status] : {} ", responseWrapper.getStatus());
             if (responseWrapper.getStatus() >= 400) {
-                log.error("==============Error Response=================");
-                log.error("[Response Status] : {} ", responseWrapper.getStatus());
-                log.error("[ErrorMessage] : {}", responseBody);
-                log.error("[Response Time] : {}ms", duration);
-                log.error("==============Error Response=================");
-            } else {
-                log.info("==============Response=================");
-                log.info("[Response Status] : {} ", responseWrapper.getStatus());
-                log.info("[Response Time] : {}ms", duration);
-                log.info("==============Response=================");
+                log.info("[ErrorMessage] : {}", responseBody);
             }
+            log.info("[Response Time] : {}ms", duration);
+            log.info("==============Response=================");
 
         } catch (Exception e) {
-            log.error("[LogFilter Error]", e);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
