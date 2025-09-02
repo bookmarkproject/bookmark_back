@@ -82,6 +82,7 @@ public class LogFilter extends OncePerRequestFilter {
         } finally {
             responseWrapper.copyBodyToResponse();
             MDC.remove("userId");
+            MDC.remove("reqId");
         }
     }
 }
