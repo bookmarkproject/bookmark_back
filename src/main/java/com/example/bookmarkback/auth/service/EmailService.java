@@ -45,8 +45,6 @@ public class EmailService {
 
     @Transactional
     public EmailResponse mailSend(EmailRequest emailDRequest) {
-        log.info("인증번호 발송 시작");
-
         Map<String, String> mailInfos = makeMessageForm(emailDRequest.email());
         saveEmailVerificationInfo(emailDRequest.email(), mailInfos.get("authNum"));
 
@@ -59,9 +57,7 @@ public class EmailService {
 
     @Transactional
     public EmailResponse authNumCheck(EmailRequest emailRequest) {
-        log.info("인증번호로 이메일 인증 시작");
         String email = emailRequest.email();
-        log.info("인증을 시도한 사용자 이메일 : {}", email);
         String authNum = emailRequest.authNum();
         EmailVerification foundEmailVerification = emailVerificationRepository.findFirstByEmailOrderByExpiredAtDesc(
                 email).orElseThrow(() -> new BadRequestException("인증번호를 발송하지 않은 사용자입니다."));
@@ -69,8 +65,6 @@ public class EmailService {
 
         foundEmailVerification.setVerified(true);
         foundEmailVerification.setVerifiedAt(LocalDateTime.now().plusMinutes(5));
-        log.info("최신 인증 만료 시간 : {}", foundEmailVerification.getVerifiedAt());
-        log.info("이메일 인증 여부 : {}", foundEmailVerification.isVerified());
 
         if (emailRequest.type() != null && AuthCheckType.toEnum(emailRequest.type())
                 .equals(AuthCheckType.PASSWORDCHANGE)) {
@@ -83,8 +77,6 @@ public class EmailService {
     }
 
     private static void validationAuthNum(EmailVerification foundEmailVerification, String authNum) {
-        log.info("인증번호 : {}, 사용자 입력 인증번호 : {}", foundEmailVerification.getCode(), authNum);
-        log.info("만료 시간 : {}, 현재 시간: {}", foundEmailVerification.getExpiredAt(), LocalDateTime.now());
         if (!foundEmailVerification.getCode().equals(authNum)) {
             throw new BadRequestException("인증번호가 일치하지 않습니다.");
         } else if (foundEmailVerification.getExpiredAt().isBefore(LocalDateTime.now())) {
@@ -100,10 +92,8 @@ public class EmailService {
                     false,
                     LocalDateTime.now().plusMinutes(5), null);
             emailVerificationRepository.save(emailVerification);
-            log.info("저장된 인증번호 엔티티 정보: {}", emailVerification.toString());
         } else {
             foundEmailVerification.setCode(authNum);
-            log.info("저장된 인증 번호: {}", authNum);
             foundEmailVerification.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         }
     }
@@ -144,7 +134,6 @@ public class EmailService {
             helper.setSubject(title);
             helper.setText(content, true);
             javaMailSender.send(message);
-            log.info("{} -> {}로 메일 전송 완료", setFrom, toMail);
         } catch (MessagingException e) {
             e.printStackTrace();
             throw new BadRequestException("인증번호 발송에 실패했습니다.");

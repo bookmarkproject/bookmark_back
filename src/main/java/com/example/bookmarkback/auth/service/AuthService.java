@@ -54,8 +54,6 @@ public class AuthService {
 
     @Transactional
     public MemberResponse signup(SignupRequest signupRequest) throws Exception {
-        log.info("회원가입 시작");
-
         Member member = signupRequest.toMember(encodePassword(signupRequest.password()));
         checkDuplicationEmail(member.getEmail());
         checkDuplicationNickname(member.getNickname());
@@ -64,8 +62,6 @@ public class AuthService {
 
         try {
             Member savedMember = memberRepository.save(member);
-            log.info("회원가입 성공 회원 id : {}", savedMember.getId());
-            log.info("회원가입 성공 비밀번호 : {}", savedMember.getPassword());
             deleteEmailVerification(savedMember.getEmail());
             return MemberResponse.response(savedMember);
         } catch (Exception e) {
@@ -92,7 +88,6 @@ public class AuthService {
             RefreshToken savedToken = refreshTokenRepository.save(
                     new RefreshToken(foundMember, refreshToken,
                             LocalDateTime.now().plusDays(REFRESH_TOKEN_DURATION)));
-            log.info("리프레쉬 토큰 만료 시간: {}", savedToken.getExpiredAt());
         }
 
         return MemberResponse.response(foundMember, jwtUtils.createAccessToken(foundMember), refreshToken);
@@ -157,16 +152,11 @@ public class AuthService {
 
     private void deleteEmailVerification(String email) {
         emailVerificationRepository.deleteByEmail(email);
-        log.info("{}에 해당하는 인증 정보 삭제", email);
     }
 
     private void checkEmailVerification(String email) {
         EmailVerification foundEmailVerification = emailVerificationRepository.findFirstByEmailOrderByExpiredAtDesc(
                 email).orElseThrow(() -> new BadRequestException("인증 내역이 존재하지 않습니다."));
-        log.info("회원 가입 이메일 인증 여부 체크");
-        log.info("회원 가입 인증 여부 : {}", foundEmailVerification.isVerified());
-        log.info("회원 가입 유효 시간 여부 : {}", foundEmailVerification.getVerifiedAt());
-        log.info("현재 시간 : {} ", LocalDateTime.now());
         if (!foundEmailVerification.isVerified()) {
             throw new BadRequestException("이메일 인증을 진행하지 않은 사용자입니다.");
         } else if (foundEmailVerification.getVerifiedAt().isBefore(LocalDateTime.now())) {
@@ -184,16 +174,13 @@ public class AuthService {
 
     private void checkDuplicationEmail(String email) {
         if (memberRepository.existsByEmail(email)) {
-            log.error("중복 이메일 예외 발생");
             throw new BadRequestException("이미 가입된 이메일이 있습니다.");
         }
     }
 
     private void checkDuplicationNickname(String nickname) {
         if (memberRepository.existsByNickname(nickname)) {
-            log.error("중복 닉네임 예외 발생");
             throw new BadRequestException("이미 사용중인 닉네임입니다.");
         }
     }
-
 }

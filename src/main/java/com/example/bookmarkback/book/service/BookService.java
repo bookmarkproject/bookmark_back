@@ -27,7 +27,6 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<BookResponse> getLatestBooks() throws Exception {
-        log.info("최신 책 가져오기 서비스 로직 진입");
         Map<String, Object> additionalParameters = new HashMap<>();
         additionalParameters.put("querytype", "ItemNewSpecial");
 
@@ -36,8 +35,6 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<BookResponse> getBestSellers() throws Exception {
-        log.info("베스트셀러 가져오기 서비스 로직 진입");
-
         Map<String, Object> additionalParameters = new HashMap<>();
         additionalParameters.put("querytype", "BestSeller");
 
@@ -46,15 +43,12 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public BookResponse getBookById(Long id) {
-        log.info("책 id로 책 가져오기 서비스 로직 진입");
         return BookResponse.response(bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 id에 대한 책 정보가 존재하지 않습니다.")));
     }
 
     @Transactional(readOnly = true)
     public List<BookResponse> searchBooks(String query) throws Exception {
-        log.info("책 검색 서비스 로직 진입");
-
         Map<String, Object> additionalParameters = new HashMap<>();
         additionalParameters.put("query", query);
 
@@ -65,13 +59,11 @@ public class BookService {
     private List<BookResponse> getBookListByAladin(Map<String, Object> parameters) throws Exception {
         List<BookResponse> result = new ArrayList<>();
         Map<String, Object> response = aladdinApiService.getBookList(parameters);
-        log.info("API 결과 : {}", response);
         if (response.containsKey("errorCode")) {
             throw new Exception();
         }
         List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
         for (Map<String, Object> book : bookList) {
-            log.info("가져온 첵 정보 : {}", BookResponse.response(book).toString());
             result.add(BookResponse.response(book));
         }
         return result;
@@ -80,13 +72,11 @@ public class BookService {
     private List<BookResponse> getAladinBookByQuery(Map<String, Object> parameters) throws Exception {
         List<BookResponse> result = new ArrayList<>();
         Map<String, Object> response = aladdinApiService.getBookByQuery(parameters);
-        log.info("API 결과 : {}", response);
         if (response.containsKey("errorCode")) {
             throw new Exception();
         }
         List<Map<String, Object>> bookList = (List<Map<String, Object>>) response.get("item");
         for (Map<String, Object> book : bookList) {
-            log.info("가져온 첵 정보 : {}", BookResponse.response(book).toString());
             result.add(BookResponse.response(book));
         }
         return result;
@@ -98,7 +88,6 @@ public class BookService {
         parameters.put("optResult", "ratinginfo");
         parameters.put("itemId", bookRecordRequest.isbn());
         Map<String, Object> response = aladdinApiService.getPageAndRating(parameters);
-        log.info("API 결과 : {}", response);
         if (response.containsKey("errorCode")) {
             throw new Exception();
         }

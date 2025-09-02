@@ -37,8 +37,6 @@ public class AladdinApiService {
         }
         String requestUrl = baseUrl + sj.toString();
 
-        log.info("요청 URL : {}", requestUrl);
-
         return restClient.get()
                 .uri(requestUrl)
                 .retrieve()
@@ -59,8 +57,6 @@ public class AladdinApiService {
 
         URI requestUrl = URI.create(url);
 
-        log.info("요청 URL : {}", requestUrl);
-
         return restClient.get()
                 .uri(requestUrl)
                 .retrieve()
@@ -78,8 +74,6 @@ public class AladdinApiService {
                     URLEncoder.encode(String.valueOf(param.getValue()), StandardCharsets.UTF_8));
         }
         String requestUrl = baseUrl + sj.toString();
-
-        log.info("요청 URL : {}", requestUrl);
 
         return restClient.get()
                 .uri(requestUrl)
