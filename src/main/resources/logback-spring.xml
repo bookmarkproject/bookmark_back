@@ -19,7 +19,7 @@
                 <onMatch>ACCEPT</onMatch>
                 <onMismatch>DENY</onMismatch>
             </filter>
-            <encoder>
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
                 <providers>
                     <timestamp>
                         <fieldName>timestamp</fieldName>
@@ -45,6 +45,10 @@
                     <stackTrace>
                         <fieldName>stacktrace</fieldName>
                     </stackTrace>
+                    <mdc>
+                        <fieldName>userId</fieldName>
+                        <key>userId</key>
+                    </mdc>
                     <uuid>
                         <fieldName>traceId</fieldName>
                         <strategy>random</strategy>
@@ -91,6 +95,10 @@
                     <stackTrace>
                         <fieldName>stacktrace</fieldName>
                     </stackTrace>
+                    <mdc>
+                        <fieldName>userId</fieldName>
+                        <key>userId</key>
+                    </mdc>
                     <uuid>
                         <fieldName>traceId</fieldName>
                         <strategy>random</strategy>
