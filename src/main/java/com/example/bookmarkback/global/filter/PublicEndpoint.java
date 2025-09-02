@@ -11,7 +11,8 @@ public enum PublicEndpoint {
     AuthPostEndpoint(HttpMethod.POST, "/auth/**"),
     AuthGetEndpoint(HttpMethod.GET, "/auth/**"),
     PrometheusGetEndPoint(HttpMethod.GET, "/actuator/prometheus"),
-    TestPostEndpoint(HttpMethod.POST, "/test/**");
+    TestPostEndpoint(HttpMethod.POST, "/test/**"),
+    TestGetEndpoint(HttpMethod.GET, "/test/**");
 
 
     private static final List<PublicEndpoint> PUBLIC_ENDPOINTS = Arrays.asList(values());
