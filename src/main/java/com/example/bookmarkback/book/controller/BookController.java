@@ -1,5 +1,7 @@
 package com.example.bookmarkback.book.controller;
 
+import com.example.bookmarkback.book.cache.BestSellerCache;
+import com.example.bookmarkback.book.cache.LatestBookCache;
 import com.example.bookmarkback.book.dto.BookResponse;
 import com.example.bookmarkback.book.service.BookService;
 import java.util.List;
@@ -17,16 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
 
     private final BookService bookService;
+    private final BestSellerCache bestSellerCache;
+    private final LatestBookCache latestBookCache;
 
     @GetMapping("/latest")
     public ResponseEntity<List<BookResponse>> getLatestBooks() throws Exception {
-        List<BookResponse> bookResponses = bookService.getLatestBooks();
+        List<BookResponse> bookResponses = latestBookCache.getLatestBookList();
         return ResponseEntity.ok(bookResponses);
     }
 
     @GetMapping("/bestseller")
     public ResponseEntity<List<BookResponse>> getBestSeller() throws Exception {
-        List<BookResponse> bookResponses = bookService.getBestSellers();
+        List<BookResponse> bookResponses = bestSellerCache.getBestsellerList();
         return ResponseEntity.ok(bookResponses);
     }
 

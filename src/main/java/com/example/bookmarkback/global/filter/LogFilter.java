@@ -8,8 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jboss.logging.MDC;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +35,12 @@ public class LogFilter extends OncePerRequestFilter {
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
         try {
+            String reqId = request.getHeader("X-Request-ID");
+            if (reqId == null || reqId.isEmpty()) {
+                reqId = UUID.randomUUID().toString();
+            }
+            MDC.put("reqId", reqId);
+
             String url = request.getRequestURI();
             String queryString = request.getQueryString() != null ? "?" + request.getQueryString() : "";
             String method = request.getMethod();
@@ -60,7 +68,6 @@ public class LogFilter extends OncePerRequestFilter {
             log.info("==============Response=================");
 
         } catch (Exception e) {
-            log.error("[LogFilter Error]", e);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -68,6 +75,8 @@ public class LogFilter extends OncePerRequestFilter {
                     .write(objectMapper.writeValueAsString(new ErrorResponse("로깅 필터 오류 발생.")));
         } finally {
             responseWrapper.copyBodyToResponse();
+            MDC.remove("userId");
+            MDC.remove("reqId");
         }
     }
 }

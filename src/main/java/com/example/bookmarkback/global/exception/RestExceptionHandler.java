@@ -1,6 +1,7 @@
 package com.example.bookmarkback.global.exception;
 
 import com.example.bookmarkback.global.exception.dto.ExceptionResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Slf4j
 public class RestExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
@@ -40,8 +42,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleBadException(Exception ex) {
-        System.out.println("ex = " + ex);
-        ex.printStackTrace();
+        log.error("에러 내용 : ", ex);
         return new ResponseEntity<>(new ExceptionResponse("서버에 문제가 발생했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

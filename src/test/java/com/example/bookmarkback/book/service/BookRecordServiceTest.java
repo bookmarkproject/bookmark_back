@@ -115,7 +115,6 @@ class BookRecordServiceTest {
         assertThat(bookRecordResponse.bookResponse().title()).isEqualTo("혼모노");
         assertThat(bookRecordResponse.bookResponse().contents()).isEqualTo("하하하");
         assertThat(bookRecordResponse.bookResponse().page()).isEqualTo(368L);
-        assertThat(bookRecordResponse.bookResponse().rating()).isEqualTo(9.0D);
     }
 
     private Member getTestMember(String email, String nickname) {

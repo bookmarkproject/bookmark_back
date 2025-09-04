@@ -8,6 +8,7 @@ import com.example.bookmarkback.book.dto.BookLogResponse;
 import com.example.bookmarkback.book.entity.Book;
 import com.example.bookmarkback.book.entity.BookLog;
 import com.example.bookmarkback.book.entity.BookRecord;
+import com.example.bookmarkback.book.entity.LogType;
 import com.example.bookmarkback.book.entity.RecordStatus;
 import com.example.bookmarkback.book.repository.BookLogQuestionRepository;
 import com.example.bookmarkback.book.repository.BookLogRepository;
@@ -147,6 +148,7 @@ class BookLogServiceTest {
                 .isOver(false)
                 .questions(List.of("추천", "감상평"))
                 .answers(List.of("좋았음", "그럭저럭"))
+                .logType(LogType.Normal.getName())
                 .build();
 
         BookLogResponse response = bookLogService.saveBookLog(request, new MemberAuth(member1.getId()));
@@ -177,6 +179,7 @@ class BookLogServiceTest {
                 .isOver(true)
                 .questions(List.of("추천", "감상평"))
                 .answers(List.of("좋았음", "그럭저럭"))
+                .logType(LogType.Normal.getName())
                 .build();
 
         BookLogResponse response = bookLogService.saveBookLog(request, new MemberAuth(member1.getId()));
@@ -234,6 +237,6 @@ class BookLogServiceTest {
     }
 
     private BookLog getTestBookLog(BookRecord bookRecord) {
-        return new BookLog(bookRecord, 13L, 31L, LocalDate.of(2025, 7, 30), 31L);
+        return new BookLog(bookRecord, 13L, 31L, LocalDate.of(2025, 7, 30), 31L, LogType.Normal);
     }
 }

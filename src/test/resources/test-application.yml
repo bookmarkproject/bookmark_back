@@ -18,12 +18,31 @@ spring:
           starttls:
             enable: true
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+cloud:
+  aws:
+    s3:
+      bucket: ${BUCKET_NAME}
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: ${ACCESS_KEY_ID}
+      secret-key: ${SECRET_ACCESS_KEY}
+
 host:
   email: ${EMAIL_ID}
   password: ${EMAIL_PASSWORD}
 
 aladin:
   key: ${ALADIN_API_KEY}
+
+logging:
+  level:
+    org.springframework.mail: DEBUG
 
 ---
 spring:
@@ -53,6 +72,7 @@ logging:
 
 server:
   port: 8082
+
 jwt:
   access:
     expiration: 1800000

@@ -1,10 +1,12 @@
 package com.example.bookmarkback.book.service;
 
+import com.example.bookmarkback.book.dto.BookLogOverRequest;
 import com.example.bookmarkback.book.dto.BookLogRequest;
 import com.example.bookmarkback.book.dto.BookLogResponse;
 import com.example.bookmarkback.book.entity.BookLog;
 import com.example.bookmarkback.book.entity.BookLogQuestion;
 import com.example.bookmarkback.book.entity.BookRecord;
+import com.example.bookmarkback.book.entity.LogType;
 import com.example.bookmarkback.book.entity.RecordStatus;
 import com.example.bookmarkback.book.repository.BookLogQuestionRepository;
 import com.example.bookmarkback.book.repository.BookLogRepository;
@@ -46,13 +48,20 @@ public class BookLogService {
 
     @Transactional
     public BookLogResponse saveBookLog(BookLogRequest bookLogRequest, MemberAuth memberAuth) {
-        log.info("책 기록 로그 저장 서비스 로직 진입");
         BookRecord record = findBookRecord(bookLogRequest.bookRecordId());
         updateRecord(record, bookLogRequest);
         BookLog bookLog = bookLogRequest.toBookLog(record);
         bookLogRepository.save(bookLog);
-        log.info("생성된 책 기록 로그 : {}", bookLog);
         saveBookLogQuestions(bookLogRequest, bookLog);
+        return BookLogResponse.response(bookLog);
+    }
+
+    @Transactional
+    public BookLogResponse saveOverBookLog(@Valid BookLogOverRequest bookLogOverRequest) {
+        BookRecord record = findBookRecord(bookLogOverRequest.bookRecordId());
+        BookLog bookLog = bookLogOverRequest.toBookLog(record);
+        bookLogRepository.save(bookLog);
+        saveBookLogOverQuestions(bookLogOverRequest, bookLog);
         return BookLogResponse.response(bookLog);
     }
 
@@ -61,7 +70,14 @@ public class BookLogService {
             BookLogQuestion bookLogQuestion = new BookLogQuestion(bookLog, bookLogRequest.questions().get(i),
                     bookLogRequest.answers().get(i));
             bookLogQuestionRepository.save(bookLogQuestion);
-            log.info("생성된 책 기록 로그 질문과 대답 : {}", bookLogQuestion);
+        }
+    }
+
+    private void saveBookLogOverQuestions(BookLogOverRequest bookLogOverRequest, BookLog bookLog) {
+        for (int i = 0; i < bookLogOverRequest.answers().size(); i++) {
+            BookLogQuestion bookLogQuestion = new BookLogQuestion(bookLog, bookLogOverRequest.questions().get(i),
+                    bookLogOverRequest.answers().get(i));
+            bookLogQuestionRepository.save(bookLogQuestion);
         }
     }
 
@@ -75,7 +91,6 @@ public class BookLogService {
             }
         }
         record.setReadingTime(record.getReadingTime() + bookLogRequest.readingTime());
-        log.info("업데이트 후 책 기록 : {}", record);
     }
 
     private BookRecord findBookRecord(Long id) {
