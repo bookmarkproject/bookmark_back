@@ -55,11 +55,13 @@
 
 ## 📌 시스템 아키텍처
 
-<img src="readmeAsset/systemArchitecture.png">
+<img src="readmeAsset/SystemArchitecture.png">
 
 1. AWS EC2를 이용하여 서버 구축
 2. Nginx를 이용하여 HTTP -> HTTPS 구현
 3. Prometheus + Grafana를 활용하여 Monitoring 시스템 구현
+
+<br>
 
 ## 🎁 애플리케이션 아키텍처
 
@@ -75,6 +77,8 @@
     - Gmail 사용
 5. Aladin Open API를 이용한 도서 정보 가져오기 시스템 구현
 6. MySQL을 이용한 관계형 데이터 저장
+
+<br> 
 
 ## 📂 디렉토리 구조 및 패키지 역할
 
