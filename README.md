@@ -50,6 +50,7 @@
 
 - GitHub
 - Postman
+- Notion
 
 <br>
 
@@ -251,59 +252,273 @@ main에서 만든 기능을 테스트 하기 위한 패키지 (JUnit)
 
 ## ✅ 기술 적용
 
-1. 커뮤니티 탐지를 위해 어떠한 알고리즘을 사용해야 할까?
-    - 초기에 Neo4j GDS 라이브러리의 Louvain 알고리즘을 사용했음.
-    - 하지만 커뮤니티를 나눈 결과가 원하는 대로 나오지 않았음.
-    - 팀원들끼리 회의한 후 유사한 그룹을 더 잘 표현할 수 있는 Kmeans 알고리즘을 사용하기로 결정함.
+### 1. BCryptPasswordEncoder를 통해 보안 강화
 
-2. 여러 패키지에서 DB 연결을 동시에 진행하고 있음.
-    - ChatingManager, AuthManager, episodeManager 패키지에서 DB연결을 진행함.
-    - 코드의 중복성을 제거하기 위해 전역적으로 설정할 수 있는 globals 패키지에 DB를 연결할 수 있는 util 파일을 만듬.
-    - 외부 패키지에서 DBUtil에 있는 connection 변수를 import만 해도 DB를 바로 사용할 수 있다.
+```
+package com.example.bookmarkback.auth.config;
 
-<br>
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-## 🥇 관련 서비스 개발 및 성과
+@Configuration
+public class SecurityConfig {
 
-### 1. 프로젝트 실험 결과
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+```
 
-<img src="readmeAsset/프로젝트결과.png">
-본 프로젝트에서는 다음과 같은 3가지 모델을 두어 비교를 하였다.   
-
-- ChatGPT 와 비교해서는 정확도를 높이고 사용한 토큰 개수는 대폭 줄였다.
-- ChatGPT RAG와 비교해서는 정확도를 거의 유지하고 토큰 개수는 2배 정도 줄였다.
-
-본 프로젝트의 결과 정확도를 비슷하게 유지하면서 토큰의 개수를 많이 줄여 경제적인 효율성까지 얻는 결과를 도출하였다.
-
-### 2. 교내 학습 도우미 이루매GPT
-
-<img src="readmeAsset/이루매GPT.png">
-본 프로젝트의 지식 그래프, 에피소드를 이용한 RAG 기술을 적용하여 직접 교내 학습 도우미 웹 챗봇 서비스로 구현   
-
-- 새내기 학습 가이드의 내용을 초기에 학습하여 교내 구성원들이 학교 생활에 대해 질문했을 때 도움을 줌.
-
-- 대화를 할 때마다 대화 내용이 저장됨.
-
-- 상단과 하단에 있는 학습 버튼을 통해 개인화가 가능하도록 구현함.
+- BCrypt 알고리즘을 사용해 비밀번호 + 랜덤한 Salt를 해시값으로 변환
+    - 암호화된 값은 "알고리즘 버전 + cost Factor + Random Salt + 해시된 비밀번호"의 구조를 가진다.
+    - 사용자가 비밀번호를 입력하면 DB에 저장된 Salt, cost 값 등을 이용하여 같은 방법으로 해싱한 뒤 DB에 저장된 값과 비교한다.
+    - 해시된 암호값을 통해 역으로 원래 비밀번호를 알아내는 것은 수학적으로 불가능에 가깝다.
 
 <br>
 
-### 3. 논문 발표
+### 2. 테스트 코드 작성 (JUnit)
 
-본 프로젝트의 내용을 기반으로 제작한 논문 입니다.   
-[논문 보러 가기](readmeAsset/AI캐릭터논문2.pdf)
+```
+@Test
+@DisplayName("메일 인증을 완료한 사용자는 회원가입이 정상적으로 진행된다.")
+void signupTest() throws Exception {
+    //given
+    SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+    saveEmailVerification(signupRequest.email(), true);
+
+    //when
+    MemberResponse memberResponse = authService.signup(signupRequest);
+    Member savedMember = memberRepository.findById(memberResponse.id()).orElse(null);
+
+    //then
+    assertThat(memberResponse.id()).isEqualTo(savedMember.getId());
+    assertThat(memberResponse.email()).isEqualTo(savedMember.getEmail());
+    assertThat(memberResponse.role()).isEqualTo("USER");
+
+}
+
+@Test
+@DisplayName("메일 인증이 되지 않은 사용자는 회원가입시 예외가 발생한다.")
+void signupWithoutMailAuthentication() throws Exception {
+    //given
+    SignupRequest signupRequest = getTestSignupRequest("kkk@gmail.com", "포파");
+    saveEmailVerification(signupRequest.email(), false);
+
+    //when,then
+    assertThatThrownBy(() -> authService.signup(signupRequest))
+            .isInstanceOf(BadRequestException.class)
+            .hasMessage("이메일 인증을 진행하지 않은 사용자입니다.");
+}
+```
+
+- 해피 케이스 (정상적인 흐름) vs 예외 케이스 (비정상적인 흐름이 나올 케이스)로 구분 지어서 각각 테스트 코드를 작성함.
+- 위 케이스는 "정상적인 회원 가입 vs 메일 인증을 하지 않았을 때 회원가입"로 구분 지어서 테스트 코드 작성
 
 <br>
 
-### 4. 수상
+```
+@AfterEach
+void tearDown() {
+    emailVerificationRepository.deleteAllInBatch();
+    refreshTokenRepository.deleteAllInBatch();
+    memberRepository.deleteAllInBatch();
+}
+```
 
-#### 제5회 인공지능학술대회 장려 논문상
+- @AfterEach 어노테이션을 이용해 각 테스트 케이스가 끝날 때마다 사용한 DB에 있는 모든 데이터를 제거함.
+- 각 테스트 케이스들은 다른 테스트들과 독립적으로 실행되어야 하기 때문임.
 
-<img src="readmeAsset/논문대회수상.jpg">
+<br>
 
-#### 서울시립대 공과대학 실전문제연구대회 우수상
+### 3. 정규식을 활용하여 Request Body 유효성 검증
 
-<img src="readmeAsset/실전문제수상.jpg">
+```
+@Builder
+public record ChangePasswordRequest(
+
+        @NotBlank(message = "비밀번호는 필수 항목입니다.")
+        @Size(min = 8, max = 16, message = "비밀번호는 8자 이상 16자 이하여야 합니다.")
+        @Pattern(
+                regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()])[A-Za-z\\d!@#$%^&*()]{8,16}$",
+                message = "비밀번호는 영어, 숫자, 특수문자(!@#$%^&*())를 최소 1개 이상 포함해야 합니다."
+        )
+        String password,
+
+        String token
+) {
+
+}
+```
+
+- 위 케이스는 비밀번호를 8자 이상 16자 이하이고, 영어, 숫자, 특수문자가 최소 1개씩 포함 되어있는지를 검증하는 코드
+- 비밀번호 이외에도 Email, name 등의 값들이 null, blank로 들어오는지 확인하여 유효성을 검증
+
+<br>
+
+### 4. Fetch Lazy 전략을 이용한 지연 로딩
+
+```
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "member_id")
+private Member member;
+
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "book_id")
+private Book book;
+```
+
+- 위와 같이 해당 엔티티를 조회할 때 member, book이 필요하지 않은 경우는 DB에 쿼리를 보내지 않도록 지연 로딩으로 설정
+
+<br>
+
+### 5. ArgumentResolver를 이용한 Parameter값 자동 주입
+
+```
+@Component
+public class MemberAuthArgumentResolver implements HandlerMethodArgumentResolver {
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return parameter.getParameterType()
+                .equals(MemberAuth.class);
+    }
+
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) webRequest.getNativeRequest();
+        if (httpServletRequest.getAttribute("member_id") == null) {
+            throw new UnauthorizedException("인증되지 않은 사용자입니다.");
+        }
+        String memberId = httpServletRequest.getAttribute("member_id").toString();
+
+        return new MemberAuth(Long.valueOf(memberId));
+    }
+}
+```
+
+```
+@GetMapping("/me")
+public ResponseEntity<MemberResponse> getMyInfo(MemberAuth memberAuth) {
+    MemberResponse memberResponse = memberService.getMyInfo(memberAuth);
+    return ResponseEntity.ok(memberResponse);
+}
+```
+
+- 요청한 사용자의 고유 ID (email이 아닌 고유 번호)는 자주 사용되는 데이터이기 때문에 이 데이터를 주입 시켜주는 역할을 하는 클래스가 필요함.
+- SpringMvc의 ArgumentReslover 기능을 활용해 Controller 호출 전에 미리 Member에 대한 고유 ID를 주입하도록 구현
+
+<br>
+
+### 6. Authentication 필터을 이용한 인증 시스템 구현
+
+```
+@Component
+@Order(2)
+@Slf4j
+public class AuthenticationFilter extends OncePerRequestFilter {
+
+    private final ObjectMapper objectMapper;
+    private final JwtUtils jwtUtils;
+
+    @Autowired
+    public AuthenticationFilter(ObjectMapper objectMapper, @Qualifier("loginJwtUtils") JwtUtils jwtUtils) {
+        this.objectMapper = objectMapper;
+        this.jwtUtils = jwtUtils;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        try {
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            String jwtToken = jwtUtils.extractToken(authorizationHeader);
+            Map<String, Object> memberData = jwtUtils.extractMemberIdAndRole(jwtToken);
+            request.setAttribute(JwtUtils.JWT_MEMBER_ID_KEY, memberData.get(JwtUtils.JWT_MEMBER_ID_KEY));
+            request.setAttribute(JwtUtils.JWT_ROLE_KEY, memberData.get(JwtUtils.JWT_ROLE_KEY));
+            log.info("[요청 멤버 ID] : {}", request.getAttribute(JwtUtils.JWT_MEMBER_ID_KEY));
+            MDC.put("userId", request.getAttribute(JwtUtils.JWT_MEMBER_ID_KEY).toString());
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter()
+                    .write(objectMapper.writeValueAsString(new ErrorResponse(e.getMessage())));
+        }
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return PublicEndpoint.isPublicEndpoint(request);
+    }
+}
+```
+
+```
+package com.example.bookmarkback.global.filter;
+
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.AntPathMatcher;
+
+public enum PublicEndpoint {
+    MailPostEndpoint(HttpMethod.POST, "/mail/**"),
+    AuthPostEndpoint(HttpMethod.POST, "/auth/**"),
+    AuthGetEndpoint(HttpMethod.GET, "/auth/**"),
+    PrometheusGetEndPoint(HttpMethod.GET, "/actuator/prometheus"),
+    TestPostEndpoint(HttpMethod.POST, "/test/**"),
+    TestGetEndpoint(HttpMethod.GET, "/test/**");
+
+
+    private static final List<PublicEndpoint> PUBLIC_ENDPOINTS = Arrays.asList(values());
+    private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
+
+    private final HttpMethod httpMethod;
+    private final String urlPattern;
+
+    PublicEndpoint(HttpMethod httpMethod, String urlPattern) {
+        this.httpMethod = httpMethod;
+        this.urlPattern = urlPattern;
+    }
+
+    public static boolean isPublicEndpoint(HttpServletRequest request) {
+        return PUBLIC_ENDPOINTS.stream()
+                .anyMatch(publicEndpoint -> publicEndpoint.matches(request));
+    }
+
+    public boolean matches(HttpServletRequest request) {
+        return httpMethod.matches(request.getMethod()) && ANT_PATH_MATCHER.match(urlPattern, request.getRequestURI());
+    }
+}
+```
+
+- Authentication을 통해서 Request Header에 있는 JWT 토큰을 가져와 유효성을 검증
+    - 유효성을 검증하는 역할은 JwtUtils 클래스가 담당
+- PublicEndpoint Enum 파일에 지정된 HttpMethod,HttpUrl은 해당 필터를 거치지 않도록 설정
+    - 로그인, 이메일 인증등이 이에 해당함.
+
+<br>
+
+### 7. AWS를 이용한 배포
+
+- 다음과 같은 과정으로 배포 과정을 진행함
+    1. AWS EC2 인스턴스 생성
+    2. 보안 그룹 설정 및 MySQL, Java 설치
+    3. 도메인 구매 및 DNS 설정 (AWS Route 53)
+    4. Postman을 활용한 HTTP 통신 테스트
+    5. Nginx, SSL/TLS 인증서 발급으로 HTTP -> HTTPS 통신 적용
+    6. Prometheus + Grafana를 이용한 모니터링 시스템 구축
+
+<br>
+
+## ⚒ 기술적 문제 해결
+
+## 🥇 관련 서비스 개발
 
 <br>
 
