@@ -63,6 +63,19 @@
 
 ## 🎁 애플리케이션 아키텍처
 
+<img src="readmeAsset/applicationArchitecture.png">
+
+1. LogFilter를 이용한 로깅 시스템 구축
+2. AuthenticationFilter를 이용한 인증 시스템 구현
+    - Request Header에서 JWT 토큰을 꺼낸 뒤 유효성 검증
+    - Public Endpoint로 지정한 요청 URL은 해당 필터를 거치지 않도록 구현
+    - JWT 토큰이 유효하지 않으면 401 응답으로 예외를 발생시킴
+3. Controller - Service - Repository 구조로 백엔드 서버 구현
+4. Spring Boot Mail (JavaMailSender)을 이용한 이메일 인증번호 발송 시스템 구현
+    - Gmail 사용
+5. Aladin Open API를 이용한 도서 정보 가져오기 시스템 구현
+6. MySQL을 이용한 관계형 데이터 저장
+
 ## 📂 디렉토리 구조 및 패키지 역할
 
 ```
