@@ -78,50 +78,174 @@
 
 ## 📂 디렉토리 구조 및 패키지 역할
 
+### Main
+
 ```
-ROOT
- ┣ AuthManager
- ┃ ┣ controller
- ┃ ┣ model
- ┃ ┣ service
- ┃ ┣ util
- ┃ 
- ┣ chatingManager
- ┃
- ┣ client
- ┃
- ┣ globals
- ┃ ┣ util
- ┃ ┗ .env
- ┃ 
- ┣ k_memorySystem
- ┃ ┣ episodeManager
- ┃ ┣ KnowledgeManager
- ┃ ┗ LLMController
- ┃
- ┗ ChatbotController.py
+main
+├── java
+│   └── com
+│       └── example
+│           └── bookmarkback
+│               ├── auth
+│               │   ├── config
+│               │   │   └── SecurityConfig.java
+│               │   ├── controller
+│               │   │   ├── AuthController.java
+│               │   │   └── EmailController.java
+│               │   ├── dto
+│               │   │   ├── AuthCheckType.java
+│               │   │   ├── ChangePasswordRequest.java
+│               │   │   ├── EmailRequest.java
+│               │   │   ├── EmailResponse.java
+│               │   │   ├── FindEmailRequest.java
+│               │   │   ├── LoginRequest.java
+│               │   │   ├── RefreshTokenRequest.java
+│               │   │   ├── RefreshTokenResponse.java
+│               │   │   └── SignupRequest.java
+│               │   ├── entity
+│               │   │   ├── EmailVerification.java
+│               │   │   └── RefreshToken.java
+│               │   ├── infra
+│               │   │   ├── JwtUtils.java
+│               │   │   ├── LoginJwtUtils.java
+│               │   │   └── PasswordChangeJwtUtils.java
+│               │   ├── repository
+│               │   │   ├── EmailVerificationRepository.java
+│               │   │   └── RefreshTokenRepository.java
+│               │   └── service
+│               │       ├── AuthService.java
+│               │       └── EmailService.java
+│               ├── book
+│               │   ├── cache
+│               │   │   ├── BestSellerCache.java
+│               │   │   └── LatestBookCache.java
+│               │   ├── controller
+│               │   │   ├── BookController.java
+│               │   │   ├── BookLogController.java
+│               │   │   ├── BookLogQuestionController.java
+│               │   │   └── BookRecordController.java
+│               │   ├── dto
+│               │   │   ├── BookLogOverRequest.java
+│               │   │   ├── BookLogQuestionResponse.java
+│               │   │   ├── BookLogRequest.java
+│               │   │   ├── BookLogResponse.java
+│               │   │   ├── BookRecordRequest.java
+│               │   │   ├── BookRecordResponse.java
+│               │   │   └── BookResponse.java
+│               │   ├── entity
+│               │   │   ├── Book.java
+│               │   │   ├── BookLog.java
+│               │   │   ├── BookLogQuestion.java
+│               │   │   ├── BookRecord.java
+│               │   │   ├── LogType.java
+│               │   │   └── RecordStatus.java
+│               │   ├── repository
+│               │   │   ├── BookLogQuestionRepository.java
+│               │   │   ├── BookLogRepository.java
+│               │   │   ├── BookRecordRepository.java
+│               │   │   └── BookRepository.java
+│               │   └── service
+│               │       ├── AladdinApiService.java
+│               │       ├── BookLogQuestionService.java
+│               │       ├── BookLogService.java
+│               │       ├── BookRecordService.java
+│               │       └── BookService.java
+│               ├── BookmarkbackApplication.java
+│               ├── global
+│               │   ├── argumentresolver
+│               │   │   └── MemberAuthArgumentResolver.java
+│               │   ├── config
+│               │   │   ├── RestTemplateConfig.java
+│               │   │   ├── S3Config.java
+│               │   │   └── WebConfig.java
+│               │   ├── dto
+│               │   │   ├── ErrorResponse.java
+│               │   │   └── MemberAuth.java
+│               │   ├── entity
+│               │   │   └── BaseEntity.java
+│               │   ├── exception
+│               │   │   ├── BadRequestException.java
+│               │   │   ├── dto
+│               │   │   │   └── ExceptionResponse.java
+│               │   │   ├── ForbiddenException.java
+│               │   │   ├── ResourceNotFoundException.java
+│               │   │   ├── RestExceptionHandler.java
+│               │   │   └── UnauthorizedException.java
+│               │   └── filter
+│               │       ├── AuthenticationFilter.java
+│               │       ├── LogFilter.java
+│               │       └── PublicEndpoint.java
+│               ├── member
+│               │   ├── controller
+│               │   │   └── MemberController.java
+│               │   ├── DataInitializer.java
+│               │   ├── dto
+│               │   │   ├── MemberRequest.java
+│               │   │   └── MemberResponse.java
+│               │   ├── entity
+│               │   │   ├── Gender.java
+│               │   │   ├── Member.java
+│               │   │   └── Role.java
+│               │   ├── repository
+│               │   │   └── MemberRepository.java
+│               │   └── service
+│               │       └── MemberService.java
+│               └── test
+│                   └── TestController.java
+└── resources
+    ├── application.yml
+    ├── logback-spring.xml
+    ├── static
+    └── templates
  ```
 
-- AuthManager : 추후 서비스화를 위한 인증 및 인가처리를 위한 패키지
-    - controller : User로 부터 Request를 받는 패키지
-    - model : Request Type 패키지지
-    - service : Reqeust를 적절하게 처리하는 패키지
-    - util : 인증 인가 처리에 관한 유틸 패키지
-
-- chatingManager : 채팅과 관련된 역할을 하는 패키지
-- client : 테스트 데이터 및 사전 데이터를 학습하기 위한 패키지
-- globals : DB 연결과 같은 전역적으로 해야하는 작업 패키지
-    - util : 전역적으로 처리해야하는 유틸 패키지
-    - .env : 환경변수로 설정한 파일 (보안이 필요한 데이터)
-- k_memorySystem : 프로젝트 핵심 기억 시스템 패키지
-    - episodeManager : 에피소드와 관련된 처리를 하는 패키지
-    - KnowledgeManager : 지식 그래프와 관련된 처리를 하는 패키지
-    - LLMController : 생성형 AI와 API를 이용하여 소통을 하는 패키지
-- ChatbotController.py : 메인 서버 Controller, 프로젝트 Flow의 역할을 수행한다.
+1. auth : 인증과 관련된 기능을 수행하는 디렉토리
+2. book : 도서, 독서 기록과 같은 책과 관련된 기능을 수행하는 디렉토리
+3. global : 예외처리, 필터와 같은 전역적인 기능을 수행하는 디렉토리
+4. member : 사용자와 관련된 기능을 수행하는 디렉토리
+5. test : 간단한 RestAPI 테스트 기능을 수행하는 디렉토리
+6. resources : 환경설정, 로깅 설정과 같은 설정 파일의 역할을 수행하는 디렉토리
 
 <br>
 
-## ✅ 기술적 이슈 및 해결 과정
+### TEST
+
+```
+test
+├── java
+│   └── com
+│       └── example
+│           └── bookmarkback
+│               ├── auth
+│               │   ├── controller
+│               │   │   └── AuthControllerTest.java
+│               │   ├── infra
+│               │   │   └── JwtUtilsTest.java
+│               │   └── service
+│               │       ├── AuthServiceTest.java
+│               │       └── EmailServiceTest.java
+│               ├── book
+│               │   └── service
+│               │       ├── BookLogQuestionServiceTest.java
+│               │       ├── BookLogServiceTest.java
+│               │       ├── BookRecordServiceTest.java
+│               │       └── BookServiceTest.java
+│               ├── BookmarkbackApplicationTests.java
+│               └── global
+│                   ├── exception
+│                   │   └── RestExceptionHandlerTest.java
+│                   └── filter
+│                       └── PublicEndpointTest.java
+└── resources
+    ├── logback-test.xml
+    └── test-application.yml
+```
+
+main에서 만든 기능을 테스트 하기 위한 패키지 (JUnit)
+
+<br>
+
+## ✅ 기술 적용
 
 1. 커뮤니티 탐지를 위해 어떠한 알고리즘을 사용해야 할까?
     - 초기에 Neo4j GDS 라이브러리의 Louvain 알고리즘을 사용했음.
