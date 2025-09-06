@@ -660,6 +660,8 @@ public RefreshTokenResponse refreshToken(@Valid RefreshTokenRequest refreshToken
 
 - 이후 사용자에게 토큰을 받아 토큰이 일치하는지, 유효시간이 지났는지등의 유효성을 검증한 뒤, 새로운 엑세스 토큰과 리프레쉬 토큰을 반환한다.
 
+<br>
+
 ### 3. RestClient 한글 인코딩 문제
 
 - 책 검색 API에서 한글로된 검색어를 보내면 Postman에선 잘 받아오는데, 스프링부트에서는 빈 값이 반환된다.
@@ -698,6 +700,8 @@ public RefreshTokenResponse refreshToken(@Valid RefreshTokenRequest refreshToken
 
 - 위와 같이 baseUrl에 파라미터를 추가한 URL을 만든 뒤 이것을 URI의 형태로 만들어 더 이상 인코딩되지 않도록 설정함.
 - 또한 공백은 넘어올 때 + 로 넘어온다. 그래서 “+”를 문자를 “%20” (공백 인코딩) 으로 바꿔 문제를 해결함.
+
+<br>
 
 ## 🥇 관련 서비스 개발
 
