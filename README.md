@@ -258,7 +258,7 @@ main에서 만든 기능을 테스트 하기 위한 패키지 (JUnit)
 
 ### 1. BCryptPasswordEncoder를 통해 보안 강화
 
-```
+```java
 package com.example.bookmarkback.auth.config;
 
 import org.springframework.context.annotation.Bean;
@@ -285,7 +285,8 @@ public class SecurityConfig {
 
 ### 2. 테스트 코드 작성 (JUnit)
 
-```
+```java
+
 @Test
 @DisplayName("메일 인증을 완료한 사용자는 회원가입이 정상적으로 진행된다.")
 void signupTest() throws Exception {
@@ -323,7 +324,8 @@ void signupWithoutMailAuthentication() throws Exception {
 
 <br>
 
-```
+```java
+
 @AfterEach
 void tearDown() {
     emailVerificationRepository.deleteAllInBatch();
@@ -339,7 +341,8 @@ void tearDown() {
 
 ### 3. 정규식을 활용하여 Request Body 유효성 검증
 
-```
+```java
+
 @Builder
 public record ChangePasswordRequest(
 
@@ -364,7 +367,8 @@ public record ChangePasswordRequest(
 
 ### 4. Fetch Lazy 전략을 이용한 지연 로딩
 
-```
+```java
+
 @ManyToOne(fetch = FetchType.LAZY)
 @JoinColumn(name = "member_id")
 private Member member;
@@ -380,7 +384,8 @@ private Book book;
 
 ### 5. ArgumentResolver를 이용한 Parameter값 자동 주입
 
-```
+```java
+
 @Component
 public class MemberAuthArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
@@ -403,7 +408,8 @@ public class MemberAuthArgumentResolver implements HandlerMethodArgumentResolver
 }
 ```
 
-```
+```java
+
 @GetMapping("/me")
 public ResponseEntity<MemberResponse> getMyInfo(MemberAuth memberAuth) {
     MemberResponse memberResponse = memberService.getMyInfo(memberAuth);
@@ -418,7 +424,8 @@ public ResponseEntity<MemberResponse> getMyInfo(MemberAuth memberAuth) {
 
 ### 6. Authentication 필터을 이용한 인증 시스템 구현
 
-```
+```java
+
 @Component
 @Order(2)
 @Slf4j
@@ -461,7 +468,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 }
 ```
 
-```
+```java
 package com.example.bookmarkback.global.filter;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -542,7 +549,8 @@ public enum PublicEndpoint {
 - 이렇게 되면 외부에 누군가가 postman, curl을 이용해 외부에서 요청을 보내면 이메일 인증을 받지 않고도 비밀번호를 변경할 가능성이 생김
 - 위 문제를 해결하기 위해 이메일 인증을 받으면 유효기간이 짧은 엑세스 토큰이 아닌 새로운 토큰을 발급해주고, 비밀번호 변경은 이 토큰을 이용하여 사용자가 유효한지 검증을 한다.
 
-```
+```java
+
 @Transactional
 public EmailResponse authNumCheck(EmailRequest emailRequest) {
     String email = emailRequest.email();
@@ -569,7 +577,8 @@ public EmailResponse authNumCheck(EmailRequest emailRequest) {
 
 <br>
 
-```
+```java
+
 @Transactional
 public void changePassword(@Valid ChangePasswordRequest changePasswordRequest) {
     Long memberId = extractToken(changePasswordRequest.token());
@@ -598,7 +607,8 @@ public void changePassword(@Valid ChangePasswordRequest changePasswordRequest) {
         2. DB 조회가 필요하기 때문에 속도가 더 느릴 수 있음.
 - 본 프로젝트에서는 사이드 프로젝트이기 때문에 현재는 보안상 더 좋은 UUID + DB 방식을 채택했고, 추후 성능 이슈가 있을 시 마이그레이션 고려.
 
-```
+```java
+
 @Transactional
 public MemberResponse login(LoginRequest loginRequest) {
     Member foundMember = memberRepository.findByEmail(loginRequest.email())
@@ -628,7 +638,8 @@ public MemberResponse login(LoginRequest loginRequest) {
 
 <br>
 
-```
+```java
+
 @Transactional
 public RefreshTokenResponse refreshToken(@Valid RefreshTokenRequest refreshTokenRequest) {
     String refreshToken = refreshTokenRequest.refreshToken();
@@ -663,13 +674,24 @@ public RefreshTokenResponse refreshToken(@Valid RefreshTokenRequest refreshToken
 
 <br>
 
-```
+```java
 String baseUrl = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?";
 StringJoiner sj = new StringJoiner("&");
-for (Map.Entry<String, Object> param : baseParameter.entrySet()) {
-    sj.add(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8).replace("+", "%20") + "=" +
-            URLEncoder.encode(String.valueOf(param.getValue()), StandardCharsets.UTF_8).replace("+", "%20"));
-}
+for(
+Map.Entry<String, Object> param :baseParameter.
+
+entrySet()){
+        sj.
+
+add(URLEncoder.encode(param.getKey(),StandardCharsets.UTF_8).
+
+replace("+","%20") +"="+
+        URLEncoder.
+
+encode(String.valueOf(param.getValue()),StandardCharsets.UTF_8).
+
+replace("+","%20"));
+        }
 String url = baseUrl + sj.toString();
 
 URI requestUrl = URI.create(url);
