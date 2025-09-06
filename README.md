@@ -675,26 +675,25 @@ public RefreshTokenResponse refreshToken(@Valid RefreshTokenRequest refreshToken
 <br>
 
 ```java
-String baseUrl = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?";
-StringJoiner sj = new StringJoiner("&");
-for(
-Map.Entry<String, Object> param :baseParameter.
+ public Map<String, Object> getBookByQuery(Map<String, Object> parameters) {
+    Map<String, Object> baseParameter = getBaseParameter();
+    baseParameter.putAll(parameters);
 
-entrySet()){
-        sj.
+    String baseUrl = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?";
+    StringJoiner sj = new StringJoiner("&");
+    for (Map.Entry<String, Object> param : baseParameter.entrySet()) {
+        sj.add(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8).replace("+", "%20") + "=" +
+                URLEncoder.encode(String.valueOf(param.getValue()), StandardCharsets.UTF_8).replace("+", "%20"));
+    }
+    String url = baseUrl + sj.toString();
 
-add(URLEncoder.encode(param.getKey(),StandardCharsets.UTF_8).
+    URI requestUrl = URI.create(url);
 
-replace("+","%20") +"="+
-        URLEncoder.
-
-encode(String.valueOf(param.getValue()),StandardCharsets.UTF_8).
-
-replace("+","%20"));
-        }
-String url = baseUrl + sj.toString();
-
-URI requestUrl = URI.create(url);
+    return restClient.get()
+            .uri(requestUrl)
+            .retrieve()
+            .body(Map.class);
+}
 ```
 
 - 위와 같이 baseUrl에 파라미터를 추가한 URL을 만든 뒤 이것을 URI의 형태로 만들어 더 이상 인코딩되지 않도록 설정함.
