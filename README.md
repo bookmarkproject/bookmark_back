@@ -529,7 +529,7 @@ public enum PublicEndpoint {
 
 - Web Url을 이용해 EC2 서버 "/member/me" 엔드포인트에 접근한 사진
     - 현재 JWT 토큰이 존재하지 않기 때문에 401 응답코드가 발생
-    - 위 URL은 [여기](https://bookmarkapp.store/member/me)서 확인 가능.
+    - 위 URL은 [여기](https://bookmarkapp.store/member/me)서 확인 가능 (2025.10.6 ~ 현재 금전적인 이유로 서버가 내려간 상태)
 
     <br>
 
